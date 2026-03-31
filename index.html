@@ -28,28 +28,21 @@
       display: block;
     }
 
-    /* LOGO AJUSTADA */
+    /* LOGO (NÃO CLICÁVEL) */
     .logo-keyato {
       position: fixed;
       top: 18px;
       left: 18px;
       z-index: 1000;
 
-      width: 110px; /* ALTERADO */
+      width: 110px;
 
-      border-radius: 0; /* SEM ARREDONDAMENTO */
+      border-radius: 0;
 
       box-shadow:
         0 6px 18px rgba(0, 0, 0, 0.12);
 
       overflow: hidden;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .logo-keyato:hover {
-      transform: translateY(-1px);
-      box-shadow:
-        0 10px 22px rgba(0, 0, 0, 0.18);
     }
 
     .logo-keyato img {
@@ -119,10 +112,10 @@
 
 <body>
 
-  <!-- LOGO -->
-  <a class="logo-keyato" href="https://keyatoprofissionais.com.br" target="_blank">
+  <!-- LOGO (AGORA NÃO CLICÁVEL) -->
+  <div class="logo-keyato">
     <img src="logo-site-catalogo.jpg" alt="Keyato Profissionais">
-  </a>
+  </div>
 
   <!-- CATÁLOGO -->
   <div class="catalogo">
