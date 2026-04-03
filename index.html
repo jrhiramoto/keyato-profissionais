@@ -16,29 +16,6 @@
       background: #ffffff;
     }
 
-    /* FUNDO TEMÁTICO */
-    .fundo-tematico {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-
-      background-image: url('horizontal.jpeg');
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-
-      opacity: 0.18;
-      pointer-events: none;
-    }
-
-    /* MOBILE */
-    @media (max-width: 768px) {
-      .fundo-tematico {
-        background-image: url('vertical.jpeg');
-        opacity: 0.22;
-      }
-    }
-
     .catalogo {
       position: relative;
       z-index: 1;
@@ -53,17 +30,41 @@
       display: block;
     }
 
+    /* FAIXAS TEMÁTICAS DESKTOP */
+    .tema-lateral-esquerda,
+    .tema-lateral-direita {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      width: 120px;
+      z-index: 20;
+      pointer-events: none;
+      background-image: url('horizontal.jpeg');
+      background-size: cover;
+      background-repeat: no-repeat;
+      opacity: 0.95;
+    }
+
+    .tema-lateral-esquerda {
+      left: 0;
+      background-position: left center;
+    }
+
+    .tema-lateral-direita {
+      right: 0;
+      background-position: right center;
+    }
+
     /* LOGO */
     .logo-keyato {
       position: fixed;
       top: 18px;
       left: 18px;
       z-index: 1000;
-
       width: 110px;
       border-radius: 0;
-
       box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+      overflow: hidden;
     }
 
     .logo-keyato img {
@@ -77,26 +78,20 @@
       right: 20px;
       bottom: 88px;
       z-index: 999;
-
       display: flex;
       align-items: center;
       gap: 10px;
-
       padding: 13px 20px;
       border-radius: 999px;
-
       background: linear-gradient(135deg, #25D366, #1ebe5d);
       color: #fff;
-
       text-decoration: none;
       font-size: 14px;
       font-weight: 600;
       letter-spacing: 0.2px;
-
       box-shadow:
         0 10px 25px rgba(37, 211, 102, 0.35),
         0 4px 10px rgba(0, 0, 0, 0.15);
-
       transition: all 0.25s ease;
     }
 
@@ -114,6 +109,28 @@
 
     /* MOBILE */
     @media (max-width: 768px) {
+      .tema-lateral-esquerda,
+      .tema-lateral-direita {
+        width: 100%;
+        height: 90px;
+        left: 0;
+        right: 0;
+        background-image: url('vertical.jpeg');
+        background-size: cover;
+      }
+
+      .tema-lateral-esquerda {
+        top: 0;
+        bottom: auto;
+        background-position: top center;
+      }
+
+      .tema-lateral-direita {
+        top: auto;
+        bottom: 0;
+        background-position: bottom center;
+      }
+
       .logo-keyato {
         top: 14px;
         left: 14px;
@@ -127,14 +144,14 @@
         font-size: 13px;
       }
     }
-
   </style>
 </head>
 
 <body>
 
-  <!-- FUNDO -->
-  <div class="fundo-tematico"></div>
+  <!-- TEMA -->
+  <div class="tema-lateral-esquerda"></div>
+  <div class="tema-lateral-direita"></div>
 
   <!-- LOGO -->
   <div class="logo-keyato">
@@ -151,12 +168,10 @@
   </div>
 
   <!-- BOTÃO -->
-  <a class="whatsapp" href="https://wa.me/5511950802776" target="_blank">
-    
+  <a class="whatsapp" href="https://wa.me/5511950802776" target="_blank" rel="noopener noreferrer">
     <svg viewBox="0 0 32 32" width="18" height="18" fill="white">
       <path d="M16 .396C7.163.396 0 7.56 0 16.396c0 2.885.754 5.694 2.188 8.168L0 32l7.66-2.16a15.94 15.94 0 0 0 8.34 2.332c8.837 0 16-7.163 16-16S24.837.396 16 .396zm0 29.236c-2.51 0-4.963-.67-7.1-1.94l-.507-.3-4.547 1.282 1.21-4.431-.33-.545A13.3 13.3 0 0 1 2.7 16.396c0-7.345 5.955-13.3 13.3-13.3s13.3 5.955 13.3 13.3-5.955 13.236-13.3 13.236zm7.297-9.938c-.4-.2-2.36-1.165-2.726-1.297-.366-.133-.633-.2-.9.2-.266.4-1.033 1.297-1.266 1.564-.233.266-.466.3-.866.1-.4-.2-1.69-.623-3.22-1.986-1.19-1.06-1.996-2.37-2.23-2.77-.233-.4-.025-.616.175-.816.18-.18.4-.466.6-.7.2-.233.266-.4.4-.666.133-.266.066-.5-.034-.7-.1-.2-.9-2.16-1.233-2.96-.325-.78-.655-.67-.9-.683l-.766-.013c-.266 0-.7.1-1.066.5-.366.4-1.4 1.366-1.4 3.333 0 1.966 1.433 3.866 1.633 4.133.2.266 2.82 4.31 6.833 6.04.955.412 1.7.657 2.28.84.958.305 1.83.262 2.52.159.768-.115 2.36-.964 2.693-1.896.333-.932.333-1.732.233-1.896-.1-.164-.366-.266-.766-.466z"/>
     </svg>
-
     Fale Agora com Nossa Equipe de Vendas
   </a>
 
