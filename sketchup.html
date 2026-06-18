@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Biblioteca SketchUp | Keyato Profissionais</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #f5f5f3;
+      color: #1f1f1f;
+      font-family: Arial, sans-serif;
+    }
+
+    .page {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 36px 0 48px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand img {
+      width: 86px;
+      height: auto;
+      display: block;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+    }
+
+    .brand-text small {
+      display: block;
+      font-size: 12px;
+      letter-spacing: 1.6px;
+      text-transform: uppercase;
+      color: #777;
+      margin-bottom: 6px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 44px);
+      line-height: 1;
+      letter-spacing: -1px;
+    }
+
+    .back {
+      color: #333;
+      text-decoration: none;
+      border: 1px solid #d7d7d2;
+      background: #fff;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-size: 14px;
+      font-weight: 600;
+      box-shadow: 0 5px 14px rgba(0,0,0,0.06);
+      white-space: nowrap;
+    }
+
+    .hero {
+      background: #fff;
+      border: 1px solid #e4e4df;
+      border-radius: 22px;
+      padding: 28px;
+      box-shadow: 0 16px 45px rgba(0,0,0,0.07);
+      margin-bottom: 20px;
+    }
+
+    .hero p {
+      margin: 0 0 22px;
+      max-width: 760px;
+      color: #606060;
+      line-height: 1.55;
+      font-size: 15px;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .search {
+      width: 100%;
+      border: 1px solid #deded8;
+      border-radius: 999px;
+      padding: 15px 18px;
+      font-size: 15px;
+      outline: none;
+      background: #fafafa;
+    }
+
+    .search:focus {
+      border-color: #a9a9a0;
+      background: #fff;
+    }
+
+    .download-all {
+      border: none;
+      border-radius: 999px;
+      padding: 15px 22px;
+      background: #1f1f1f;
+      color: #fff;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 700;
+      box-shadow: 0 10px 22px rgba(0,0,0,0.18);
+      white-space: nowrap;
+    }
+
+    .summary {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      color: #777;
+      font-size: 13px;
+      margin: 18px 4px 12px;
+    }
+
+    .list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 16px;
+      background: #fff;
+      border: 1px solid #e6e6e1;
+      border-radius: 16px;
+      padding: 14px 16px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+    }
+
+    .item-name {
+      font-weight: 700;
+      font-size: 14px;
+      color: #242424;
+      word-break: break-word;
+    }
+
+    .item-file {
+      margin-top: 4px;
+      font-size: 12px;
+      color: #858585;
+      word-break: break-word;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 10px 15px;
+      background: #f0f0ec;
+      border: 1px solid #ddd;
+      color: #252525;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+      transition: transform .2s ease, background .2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      background: #e7e7e1;
+    }
+
+    .empty {
+      display: none;
+      text-align: center;
+      padding: 38px 18px;
+      color: #777;
+      background: #fff;
+      border: 1px solid #e6e6e1;
+      border-radius: 18px;
+    }
+
+    @media (max-width: 760px) {
+      .page {
+        width: min(100% - 24px, 1180px);
+        padding-top: 22px;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .brand img {
+        width: 74px;
+      }
+
+      .actions {
+        grid-template-columns: 1fr;
+      }
+
+      .download-all {
+        text-align: center;
+      }
+
+      .item {
+        grid-template-columns: 1fr;
+      }
+
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <header class="topbar">
+      <div class="brand">
+        <img src="logo-site-catalogo.jpg" alt="Keyato Profissionais">
+        <div class="brand-text">
+          <small>Keyato Profissionais</small>
+          <h1>Biblioteca SketchUp</h1>
+        </div>
+      </div>
+
+      <a class="back" href="index.html">Voltar ao catálogo</a>
+    </header>
+
+    <section class="hero">
+      <p>
+        Baixe os arquivos SketchUp dos puxadores disponíveis no catálogo. Use a busca para localizar por código, nome ou medida. A busca ignora acentos, então “Órion” e “Orion” exibem os mesmos resultados.
+      </p>
+
+      <div class="actions">
+        <input id="search" class="search" type="search" placeholder="Buscar por nome, código ou medida..." autocomplete="off">
+        <a class="download-all" href="https://drive.google.com/uc?export=download&id=1gvGPDKkhbPrU2mFyhGL7Nr05Ku4T8wkw" target="_blank" rel="noopener noreferrer">Baixar todos os arquivos</a>
+      </div>
+    </section>
+
+    <div class="summary">
+      <span id="count"></span>
+      <span>Arquivos em formato .skp</span>
+    </div>
+
+    <section id="list" class="list"></section>
+    <div id="empty" class="empty">Nenhum arquivo encontrado para essa busca.</div>
+  </main>
+
+  <script>
+    const arquivos = [
+  {
+    "nome": "ZP4295 - PUXADOR ALLEN GRANADO 160",
+    "arquivo": "ZP4295 - PUXADOR ALLEN GRANADO 160.skp",
+    "link": "https://drive.google.com/uc?export=download&id=13fnVdx3ZBzpdttibEii0O6Z93i8DzOg3"
+  },
+  {
+    "nome": "ZP4301 - PUXADOR ALLEN 160",
+    "arquivo": "ZP4301 - PUXADOR ALLEN 160.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1HAYCN6CDLTW3iO9DlVuzBbAuBC_NhIJk"
+  },
+  {
+    "nome": "ZP5718 - PUXADOR HORSES 192",
+    "arquivo": "ZP5718 - PUXADOR HORSES 192.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1miR6HGaClJk892qBLHnHD12iBWhWLOnj"
+  },
+  {
+    "nome": "ZP0178.192 - PUXADOR KEN 192",
+    "arquivo": "ZP0178.192 - PUXADOR KEN 192.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1JysfH0kDQYJfUWQYRZhKxEVBnkB8rhgq"
+  },
+  {
+    "nome": "ZP1278.192 - PUXADOR KEN GRANADO 192",
+    "arquivo": "ZP1278.192 - PUXADOR KEN GRANADO 192.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1DJqI7ocKsuX6ahHGlAYNR_2v3kWSV5EL"
+  },
+  {
+    "nome": "ZP1843 - PUXADOR NORD 160",
+    "arquivo": "ZP1843 - PUXADOR NORD 160.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1mr1GnGFQKaxxSZa0FY0VJOr1ncu1ZK_Q"
+  },
+  {
+    "nome": "ZP1844 - NORD GRANADO 160",
+    "arquivo": "ZP1844 - NORD GRANADO 160.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1yxOMeIJky0s_1k30XRd_1tB0oxGlRr8y"
+  },
+  {
+    "nome": "ZP1072 - PUXADOR PHENIX 64",
+    "arquivo": "ZP1072 - PUXADOR PHENIX 64.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1DTRwjvhMgirwlFQLZypXb_TZghce7Mnd"
+  },
+  {
+    "nome": "ZP1073 - PUXADOR PHENIX 192",
+    "arquivo": "ZP1073 - PUXADOR PHENIX 192.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1HqSli-DSQGZHjGFTGy5HPifUI6J8if-b"
+  },
+  {
+    "nome": "ZP1074 - PUXADOR PHENIX 320",
+    "arquivo": "ZP1074 - PUXADOR PHENIX 320.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1jvFS8NyjSL2qf0pvLth16s1G_D_JPBaX"
+  },
+  {
+    "nome": "ZP1075 - PUXADOR PHENIX 448",
+    "arquivo": "ZP1075 - PUXADOR PHENIX 448.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1XDelOXFk78aY_k8g5dIwXyXwvJ9crRYe"
+  },
+  {
+    "nome": "ZP5401.192 - SANTA FÉ GRANADO 192",
+    "arquivo": "ZP5401.192 - SANTA FÉ GRANADO 192.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1d4djlv-7anGtjA_f0FgbjjcvCRYxD2LU"
+  },
+  {
+    "nome": "ZP5450.096 - SORENTO 96",
+    "arquivo": "ZP5450.096 - SORENTO 96.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1F3_Ip7rDXbVjiNgI6fwU_vsBoj2CAoV7"
+  },
+  {
+    "nome": "ZP5450.320 - SORENTO 320",
+    "arquivo": "ZP5450.320 - SORENTO 320.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1qHzPOVrwn8XDBL-jvf38e2bEXsFGq7d-"
+  },
+  {
+    "nome": "ZP5451.096 - SORENTO GRANADO 96",
+    "arquivo": "ZP5451.096 - SORENTO GRANADO 96.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1Zm_N7dD9RKKRduUY8vZJUfU4lFaLvoY5"
+  },
+  {
+    "nome": "ZP5451.320 - SORENTO GRANADO 320",
+    "arquivo": "ZP5451.320 - SORENTO GRANADO 320.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1yHKBJB7jNv8s29HRo800JO9qiP-pSOsp"
+  },
+  {
+    "nome": "ZP5763.160 - PUXADOR TELLUS 160",
+    "arquivo": "ZP5763.160 - PUXADOR TELLUS 160.skp",
+    "link": "https://drive.google.com/uc?export=download&id=12jv6g6DAKdViwGOZIjfkKJR7sRU0JC3F"
+  },
+  {
+    "nome": "ZP5763.224 - PUXADOR TELLUS 224",
+    "arquivo": "ZP5763.224 - PUXADOR TELLUS 224.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1qyjE01aIA8BUQLa7xfI4nJyDtQK5NoEl"
+  },
+  {
+    "nome": "ZP5763.352 - PUXADOR TELLUS 352",
+    "arquivo": "ZP5763.352 - PUXADOR TELLUS 352.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1OlJtL26Q-ADe4KROqt6XzjNwEoZFlrb7"
+  },
+  {
+    "nome": "ZP5763.448 - PUXADOR TELLUS 448",
+    "arquivo": "ZP5763.448 - PUXADOR TELLUS 448.skp",
+    "link": "https://drive.google.com/uc?export=download&id=10Ot07hb792KMq9jSagsdwHzU5r22WpW3"
+  },
+  {
+    "nome": "ZP5763.544 - PUXADOR TELLUS 544",
+    "arquivo": "ZP5763.544 - PUXADOR TELLUS 544.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1tc4pKsYZkl61swOynSShf5CYIEHZMPXC"
+  },
+  {
+    "nome": "ZP5763.800 - PUXADOR TELLUS 800",
+    "arquivo": "ZP5763.800 - PUXADOR TELLUS 800.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1PQfeA_oJxnVJZrcDsoJ-J_nojPkdAok2"
+  },
+  {
+    "nome": "ZP5765.160 - PUXADOR TELLUS GRANADO 160",
+    "arquivo": "ZP5765.160 - PUXADOR TELLUS GRANADO 160.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1AIWqHJfkjpn-aq6BLt-9MAYz-ZxfBnke"
+  },
+  {
+    "nome": "ZP5765.224 - PUXADOR TELLUS GRANADO 224",
+    "arquivo": "ZP5765.224 - PUXADOR TELLUS GRANADO 224.skp",
+    "link": "https://drive.google.com/uc?export=download&id=17NQyNbLr6VMdpnBUKP6F8TGK5ojqpadW"
+  },
+  {
+    "nome": "ZP5765.352 - PUXADOR TELLUS GRANADO 352",
+    "arquivo": "ZP5765.352 - PUXADOR TELLUS GRANADO 352.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1GhrJv-ngtMGph1u6wI-o2s6fQLvnb_Oh"
+  },
+  {
+    "nome": "ZP5765.448 - PUXADOR TELLUS GRANADO 448",
+    "arquivo": "ZP5765.448 - PUXADOR TELLUS GRANADO 448.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1JYinDLKUSosE2q-pvuXj1NlB2Y3LSgaT"
+  },
+  {
+    "nome": "ZP5765.544 - PUXADOR TELLUS GRANADO 544",
+    "arquivo": "ZP5765.544 - PUXADOR TELLUS GRANADO 544.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1tH-sRVqYKWsQWLPMDjq_lSQqHx5aGT9B"
+  },
+  {
+    "nome": "ZP5765.800 - PUXADOR TELLUS GRANADO 800",
+    "arquivo": "ZP5765.800 - PUXADOR TELLUS GRANADO 800.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1H8PN6muZz_G_06QaYsts1xYJsEl_ABl_"
+  },
+  {
+    "nome": "ZP5779.160 - PUXADOR VALVET 160",
+    "arquivo": "ZP5779.160 - PUXADOR VALVET 160.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1li8UxpaKETbqUOvYH5MOOryx8-HLux_v"
+  },
+  {
+    "nome": "ZP5779.224 - PUXADOR VALVET 224",
+    "arquivo": "ZP5779.224 - PUXADOR VALVET 224.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1_LdBqG1tmG2p5dKHa1-8993i8fvnh1Q-"
+  },
+  {
+    "nome": "ZP5779.352 - PUXADOR VALVET 352",
+    "arquivo": "ZP5779.352 - PUXADOR VALVET 352.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1v4as8Z6bzUs4jMS-64oQSNrV_-QoMUQt"
+  },
+  {
+    "nome": "ZP5779.448 - PUXADOR VALVET 448",
+    "arquivo": "ZP5779.448 - PUXADOR VALVET 448.skp",
+    "link": "https://drive.google.com/uc?export=download&id=15Gr4ugkzneYeH30xuUhOh-yYg5j9a959"
+  },
+  {
+    "nome": "ZP5779.544 - PUXADOR VALVET 544",
+    "arquivo": "ZP5779.544 - PUXADOR VALVET 544.skp",
+    "link": "https://drive.google.com/uc?export=download&id=12kExGCT5odlHvTwrrcuDAj7ZSuHU7eDp"
+  },
+  {
+    "nome": "ZP5779.800 - PUXADOR VALVET 800",
+    "arquivo": "ZP5779.800 - PUXADOR VALVET 800.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1WNSHZtAn_FvP4uB0zSeI3qniIxZt_7sW"
+  },
+  {
+    "nome": "ZP5705 - PUXADOR VERSALHES 160",
+    "arquivo": "ZP5705 - PUXADOR VERSALHES 160.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1KhEX4MkSV_5ahYZOW6hokBJPAhXW7M8m"
+  },
+  {
+    "nome": "ZP5706 - PUXADOR VERSALHES 320",
+    "arquivo": "ZP5706 - PUXADOR VERSALHES 320.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1LkdLUI11hx_-iwgtoRQQWLqlcW5xf0wK"
+  },
+  {
+    "nome": "ZP5707 - PUXADOR VERSALHES 448",
+    "arquivo": "ZP5707 - PUXADOR VERSALHES 448.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1oVeWIVsP8GnUKrTJrP9AddZ5pwDREqBf"
+  },
+  {
+    "nome": "ZP5805 - PUXADOR KITTEN",
+    "arquivo": "ZP5805 - PUXADOR KITTEN.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1W0g49QPRnGiZhfYlDh0mWBF5uPitcVfr"
+  },
+  {
+    "nome": "ZP5780 - PUXADOR PIPE SIMÉTRICO",
+    "arquivo": "ZP5780 - PUXADOR PIPE SIMÉTRICO.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1Ch4xNFHHzMsK6sqUnN6nD9SdlaeMEEoA"
+  },
+  {
+    "nome": "ZP5780D - PUXADOR PIPE DIREITO",
+    "arquivo": "ZP5780D - PUXADOR PIPE DIREITO.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1NEoYxhGa_ZqIGWzfOeZHP8C34u1J9sQL"
+  },
+  {
+    "nome": "ZP5780E - PUXADOR PIPE ESQUERDO",
+    "arquivo": "ZP5780E - PUXADOR PIPE ESQUERDO.skp",
+    "link": "https://drive.google.com/uc?export=download&id=12XqIdB5w5UIk7FUXg8Mr4p_dZj3Rwldd"
+  },
+  {
+    "nome": "ZP5420 - PLYMOUTH",
+    "arquivo": "ZP5420 - PLYMOUTH.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1f_zj-06NO-cNUG3nxPCql2hb5gG8Gs6x"
+  },
+  {
+    "nome": "ZP4318 - PUXADOR SHELL 64",
+    "arquivo": "ZP4318 - PUXADOR SHELL 64.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1L8rcNPQEkqQBYZP8rEiP9jj6WJBRhCWr"
+  },
+  {
+    "nome": "ZP4319 - PUXADOR SHELL 48",
+    "arquivo": "ZP4319 - PUXADOR SHELL 48.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1wzqJa74VX3Cq2hkbgWC9yfyE3GQktNbg"
+  },
+  {
+    "nome": "ZP5452 - CASSA GRANADO",
+    "arquivo": "ZP5452 - CASSA GRANADO.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1XmmlZX1cwD_aDoIuFaJgfmzE8Yr9iAWq"
+  },
+  {
+    "nome": "ZP5711 - PUXADOR DIETRO",
+    "arquivo": "ZP5711 - PUXADOR DIETRO.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1nSLppjGEQ7Mu7YaDYJ8PR2QKs4wYd0_3"
+  },
+  {
+    "nome": "ZP5457 - LIVORNO",
+    "arquivo": "ZP5457 - LIVORNO.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1Re3yjpRWTOTw8knYw_ZmWPsPn6CGbHci"
+  },
+  {
+    "nome": "ZP5458 - MODENA",
+    "arquivo": "ZP5458 - MODENA.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1RX_61Za-7N6tXbVEv5x26kjbBRiGuAxa"
+  },
+  {
+    "nome": "ZP5405 - NEW QUADRO",
+    "arquivo": "ZP5405 - NEW QUADRO.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1cj9m9nAhlRYqUbsj4iUAI9Mr_mXSIYPg"
+  },
+  {
+    "nome": "ZP5406 - NEW TONDO",
+    "arquivo": "ZP5406 - NEW TONDO.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1-UUkHiztih-1YPtiDAr8b8B96c0siwk6"
+  },
+  {
+    "nome": "ZP0058 - PUXADOR SMART 160",
+    "arquivo": "ZP0058 - PUXADOR SMART 160.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1qGC0NM_0VIs42faLw-7TJk2xPkwaAlf6"
+  },
+  {
+    "nome": "ZP5620 - PUXADOR SMART GRANADO 312",
+    "arquivo": "ZP5620 - PUXADOR SMART GRANADO 312.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1Jp0i74RwCRfY4qGQkAywz_NfnEb_9UKG"
+  },
+  {
+    "nome": "ZP5459 - UDINE",
+    "arquivo": "ZP5459 - UDINE.skp",
+    "link": "https://drive.google.com/uc?export=download&id=18UM2OknOEQ3Cc17CZOlcRq8hh9T80Qkp"
+  },
+  {
+    "nome": "ZP5460 - PUXADOR CITIZEN PEQUENO",
+    "arquivo": "ZP5460 - PUXADOR CITIZEN PEQUENO.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1jZUB8YCDbPEJRadlAdFn1MF-4DeftA0L"
+  },
+  {
+    "nome": "ZP5461 - PUXADOR CITIZEN GRANDE",
+    "arquivo": "ZP5461 - PUXADOR CITIZEN GRANDE.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1lupwna7ZZdwuC8GMT6KZKwwYzGnY3nO6"
+  },
+  {
+    "nome": "ZP5463 - PUXADOR CITIZEN 45º GRANDE",
+    "arquivo": "ZP5463 - PUXADOR CITIZEN 45º GRANDE.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1W0TGOzndHC2Tf0k7HjWmEINLdEGFHczP"
+  },
+  {
+    "nome": "ZP1857 - PUXADOR SOTTILE 160",
+    "arquivo": "ZP1857 - PUXADOR SOTTILE 160.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1MgyVDtN5_nsIWqZKtt0m32Y5U6caEAfN"
+  },
+  {
+    "nome": "ZP5404 - ANTIQUE",
+    "arquivo": "ZP5404 - ANTIQUE.skp",
+    "link": "https://drive.google.com/uc?export=download&id=10g6iXUzOVSQVED5gzb19bppDlFh_A5zM"
+  },
+  {
+    "nome": "ZP5365 - BALI GRANADO PONTO",
+    "arquivo": "ZP5365 - BALI GRANADO PONTO.skp",
+    "link": "https://drive.google.com/uc?export=download&id=10K1h6luGiEaNHGoWmFd9OyxLHsU8OFAm"
+  },
+  {
+    "nome": "ZP5403 - BEETLE",
+    "arquivo": "ZP5403 - BEETLE.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1TPqr5tT4vAf4NSp5AqweET2WL-BMaBdy"
+  },
+  {
+    "nome": "ZP5402 - BEETLE COM BASE GRANADA",
+    "arquivo": "ZP5402 - BEETLE COM BASE GRANADA.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1uowML8pKVmJs0VCFn906q4wM_PgENTMB"
+  },
+  {
+    "nome": "ZP5768G - PUXADOR COIN GRANDE",
+    "arquivo": "ZP5768G - PUXADOR COIN GRANDE.skp",
+    "link": "https://drive.google.com/uc?export=download&id=19lp38LvikrrsYYsdXyMIp5m9nv81g5Hm"
+  },
+  {
+    "nome": "ZP5768M - PUXADOR COIN MEDIO",
+    "arquivo": "ZP5768M - PUXADOR COIN MEDIO.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1R-68L4dWirFmjCVwQU50UTPUAjGULvli"
+  },
+  {
+    "nome": "ZP5768P - PUXADOR COIN PEQUENO",
+    "arquivo": "ZP5768P - PUXADOR COIN PEQUENO.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1Zhaugjle9ejpe33GYKausocRKZwsjWNd"
+  },
+  {
+    "nome": "ZP3949 - PUXADOR CRETA 64",
+    "arquivo": "ZP3949 - PUXADOR CRETA 64.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1k7JjFeQ8q561XwrrunDwIUS8VYy-ZtDF"
+  },
+  {
+    "nome": "ZP3950 - PUXADOR CRETA 192",
+    "arquivo": "ZP3950 - PUXADOR CRETA 192.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1Rmaz0fdZK1cfcylruM-Rf-6YQGBViWiQ"
+  },
+  {
+    "nome": "ZP5238 - PUXADOR CUP",
+    "arquivo": "ZP5238 - PUXADOR CUP.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1GQOeHSJRBklnFyg5JgDaR7XIFE-xE0Tb"
+  },
+  {
+    "nome": "ZP5473 - PUXADOR DISK PEQUENO",
+    "arquivo": "ZP5473 - PUXADOR DISK PEQUENO.skp",
+    "link": "https://drive.google.com/uc?export=download&id=11LVAjt-Ez__P2jHPrT2yffMNMbxQRkZg"
+  },
+  {
+    "nome": "ZP5474 - PUXADOR DISK GRANDE",
+    "arquivo": "ZP5474 - PUXADOR DISK GRANDE.skp",
+    "link": "https://drive.google.com/uc?export=download&id=199gKDbhp-xIYhsfFPiIDBy0Xc4wulfHY"
+  },
+  {
+    "nome": "ZP1795 - PUXADOR FUNE COURO",
+    "arquivo": "ZP1795 - PUXADOR FUNE COURO.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1possFT-WmB_TRQqWl1O0CNvLvVmzyRpD"
+  },
+  {
+    "nome": "ZP5717 - PUXADOR HORSES PONTO",
+    "arquivo": "ZP5717 - PUXADOR HORSES PONTO.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1MP54vNb3Xu9c-rOhNB6ofbSMbtykb4gS"
+  },
+  {
+    "nome": "ZP5364 - PUXADOR MINI BALI GRANADO PONTO",
+    "arquivo": "ZP5364 - PUXADOR MINI BALI GRANADO PONTO.skp",
+    "link": "https://drive.google.com/uc?export=download&id=11snY-ADiC8Lzm9bTSspwsG0Cdu5ROD_R"
+  },
+  {
+    "nome": "ZP5426 - PUXADOR PAIO 64",
+    "arquivo": "ZP5426 - PUXADOR PAIO 64.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1P0z_-_ixAuSHyX20PYxtSBTX_8-RV_gt"
+  },
+  {
+    "nome": "ZP0074 - PUXADOR PLANA",
+    "arquivo": "ZP0074 - PUXADOR PLANA.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1Enjb5-4_cIgFYp9EnRlv8RNpUyGO-Clh"
+  },
+  {
+    "nome": "ZP4308 - PUXADOR RADIO PEQUENO",
+    "arquivo": "ZP4308 - PUXADOR RADIO PEQUENO.skp",
+    "link": "https://drive.google.com/uc?export=download&id=16NNYV6B18ywc7d6mrBvAKooZboeXUheC"
+  },
+  {
+    "nome": "ZP4309 - PUXADOR RADIO MEDIO",
+    "arquivo": "ZP4309 - PUXADOR RADIO MEDIO.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1uqXrcb6BT8xQvq87V7zCLxE6C8u_6K11"
+  },
+  {
+    "nome": "ZP4310 - PUXADOR RADIO GRANDE",
+    "arquivo": "ZP4310 - PUXADOR RADIO GRANDE.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1LBFWM9dJt9922glKfRtVwQd0HVW0ZuDT"
+  },
+  {
+    "nome": "ZP5444 - RÁDIO COM BASE",
+    "arquivo": "ZP5444 - RÁDIO COM BASE.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1EgWO0-wTx0P3dUa7KLr3FMju5PPZDflM"
+  },
+  {
+    "nome": "ZP5401.000 - PUXADOR SANTA FÉ GRANADO PONTO",
+    "arquivo": "ZP5401.000 - PUXADOR SANTA FÉ GRANADO PONTO.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1q1hX5a_t6yPgWwu7hhFSK3JuzelXtjwZ"
+  },
+  {
+    "nome": "ZP5761 - PUXADOR SEIXO PEQUENO",
+    "arquivo": "ZP5761 - PUXADOR SEIXO PEQUENO.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1A1HQv-wh3NJDts4sDBWALDanVHSachLY"
+  },
+  {
+    "nome": "ZP5762 - PUXADOR SEIXO GRANDE",
+    "arquivo": "ZP5762 - PUXADOR SEIXO GRANDE.skp",
+    "link": "https://drive.google.com/uc?export=download&id=14It_utXpX4EZGgQgbqDTYTYu1iQM0uJe"
+  },
+  {
+    "nome": "ZP5716 - PUXADOR SHEER",
+    "arquivo": "ZP5716 - PUXADOR SHEER.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1iz6re4bVaAo8a-7U_ndD-vThlnVJPcuu"
+  },
+  {
+    "nome": "ZP5440 - SIRIUS 32",
+    "arquivo": "ZP5440 - SIRIUS 32.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1cCReaKAJwz0aKBJsf8sqMY8zY4vsKJoT"
+  },
+  {
+    "nome": "ZP5441 - SIRIUS 48",
+    "arquivo": "ZP5441 - SIRIUS 48.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1IBN9H3uzdN-RLAYXEG4yqOgQbp1UCrFJ"
+  },
+  {
+    "nome": "ZP5451.000 - SORENTO GRANADO PONTO",
+    "arquivo": "ZP5451.000 - SORENTO GRANADO PONTO.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1QyWbJKPcwpsHeaPx9margn7z3Bzgl_72"
+  },
+  {
+    "nome": "ZP5450.000 - SORENTO PONTO",
+    "arquivo": "ZP5450.000 - SORENTO PONTO.skp",
+    "link": "https://drive.google.com/uc?export=download&id=17Y8iat2H5nsLAvPiP2l99gD26yGL2kT_"
+  },
+  {
+    "nome": "ZP5779 - PUXADOR VALVET PONTO",
+    "arquivo": "ZP5779 - PUXADOR VALVET PONTO.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1UG_cXXs7ZN2NciQq25xAXHt8MsS2ciDj"
+  },
+  {
+    "nome": "ZP5704 - PUXADOR VERSALHES PONTO",
+    "arquivo": "ZP5704 - PUXADOR VERSALHES PONTO.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1b4FYKLvdr5i1tHNYlRNjS5wXYzsUmgRp"
+  },
+  {
+    "nome": "ZP1883 - PUXADOR ÓRION PEQUENO",
+    "arquivo": "ZP1883 - PUXADOR ÓRION PEQUENO.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1oLbIWz9AE7AmzqE_WSbfxfq9cK2NYNzL"
+  },
+  {
+    "nome": "ZP1884 - PUXADOR ÓRION MÉDIO",
+    "arquivo": "ZP1884 - PUXADOR ÓRION MÉDIO.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1Rf3jTuT5nM7S3KYBdgEDU5iKhEiXEYJd"
+  },
+  {
+    "nome": "ZP1885 - PUXADOR ÓRION GRANDE",
+    "arquivo": "ZP1885 - PUXADOR ÓRION GRANDE.skp",
+    "link": "https://drive.google.com/uc?export=download&id=1Cd4m0IxLzsfxYUo7nve6xFuOo9hZXxHH"
+  }
+];
+
+    const list = document.getElementById("list");
+    const search = document.getElementById("search");
+    const count = document.getElementById("count");
+    const empty = document.getElementById("empty");
+
+    function normalizar(texto) {
+      return texto
+        .toString()
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/º/g, "o");
+    }
+
+    function renderizar() {
+      const termo = normalizar(search.value.trim());
+      const filtrados = arquivos.filter(item => {
+        const base = normalizar(item.nome + " " + item.arquivo);
+        return base.includes(termo);
+      });
+
+      list.innerHTML = filtrados.map(item => `
+        <article class="item">
+          <div>
+            <div class="item-name">${item.nome}</div>
+            <div class="item-file">${item.arquivo}</div>
+          </div>
+          <a class="btn" href="${item.link}" target="_blank" rel="noopener noreferrer">Baixar SketchUp</a>
+        </article>
+      `).join("");
+
+      count.textContent = `${filtrados.length} de ${arquivos.length} arquivos`;
+      empty.style.display = filtrados.length ? "none" : "block";
+    }
+
+    search.addEventListener("input", renderizar);
+    renderizar();
+  </script>
+</body>
+</html>
