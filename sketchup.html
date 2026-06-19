@@ -637,7 +637,8 @@
       parts.push('search.addEventListener("input",renderizar);renderizar();');
       parts.push('<\/script>');
       parts.push('</body></html>');
-      return parts.join('\n');
+      return parts.join('
+');
     }
 
     function baixarArquivo(nome, conteudo, tipo) {
@@ -652,34 +653,20 @@
     document.getElementById("rarLink").addEventListener("input", salvar);
     document.getElementById("logoPath").addEventListener("input", salvar);
     document.getElementById("productRows").addEventListener("input", function(e) {
-      const input = e.target;
-      const index = Number(input.dataset.index);
-      const field = input.dataset.field;
-      if (!Number.isNaN(index) && field) {
-        produtos[index][field] = input.value;
-        salvar();
-      }
+      const input = e.target; const index = Number(input.dataset.index); const field = input.dataset.field;
+      if (!Number.isNaN(index) && field) { produtos[index][field] = input.value; salvar(); }
     });
-
-    // Atualiza somente a miniatura quando você termina de editar o campo Imagem.
-    // Não redesenha a lista inteira durante a digitação, evitando perda de foco.
-    document.getElementById("productRows").addEventListener("focusout", function(e) {
+    document.getElementById("productRows").addEventListener("change", function(e) {
       const input = e.target;
-      if (input.dataset.field === "imagem") {
-        const index = Number(input.dataset.index);
-        const card = input.closest(".product-card");
-        if (card && !Number.isNaN(index)) {
-          const novaThumb = preview(produtos[index].imagem, produtos[index].nome);
-          const thumbAtual = card.querySelector(".thumb-preview, .thumb-placeholder");
-          if (thumbAtual) thumbAtual.replaceWith(novaThumb);
-        }
-      }
+      if (input && input.dataset && input.dataset.field === "imagem") { render(); }
     });
     document.getElementById("productRows").addEventListener("click", function(e) {
       const btn = e.target.closest("button"); if (!btn) return; const index = Number(btn.dataset.index);
       if (btn.dataset.action === "delete") {
         const nomeProduto = produtos[index] && produtos[index].nome ? produtos[index].nome : "este produto";
-        const confirmar = confirm("Tem certeza que deseja excluir " + nomeProduto + "?\n\nEssa ação remove o produto da lista do admin. Para aplicar no site, gere novamente o sketchup.html.");
+        const confirmar = confirm("Tem certeza que deseja excluir " + nomeProduto + "?
+
+Essa ação remove o produto da lista do admin. Para aplicar no site, gere novamente o sketchup.html.");
         if (confirmar) { produtos.splice(index, 1); salvar(); render(); }
       }
       if (btn.dataset.action === "duplicate") { produtos.splice(index + 1, 0, Object.assign({}, produtos[index])); salvar(); render(); }
