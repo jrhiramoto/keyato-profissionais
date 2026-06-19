@@ -676,7 +676,7 @@
           '<td><input class="small-input" value="' + esc(p.arquivo || '') + '" data-field="arquivo" data-index="' + p.index + '"></td>' +
           '<td><input class="url-input" value="' + esc(p.link || '') + '" data-field="link" data-index="' + p.index + '"></td>' +
           '<td><input class="url-input" value="' + esc(p.imagem || '') + '" placeholder="sketchup_miniaturas/nome.jpg" data-field="imagem" data-index="' + p.index + '"></td>' +
-          '<td><div class="row-actions"><button class="mini-btn light" data-action="duplicate" data-index="' + p.index + '">Duplicar</button><button class="mini-btn danger" data-action="delete" data-index="' + p.index + '">Excluir</button></div></td>' +
+          '<td><div class="row-actions"><button class="mini-btn light" data-action="duplicate" data-index="' + p.index + '">Duplicar</button><button class="mini-btn danger" data-action="delete" data-index="' + p.index + '" title="Excluir produto">Excluir produto</button></div></td>' +
         '</tr>';
       }).join("");
     }
@@ -769,7 +769,11 @@
     });
     document.getElementById("productRows").addEventListener("click", function(e) {
       const btn = e.target.closest("button"); if (!btn) return; const index = Number(btn.dataset.index);
-      if (btn.dataset.action === "delete") { if (confirm("Excluir este produto?")) { produtos.splice(index, 1); salvar(); render(); } }
+      if (btn.dataset.action === "delete") {
+        const nomeProduto = produtos[index] && produtos[index].nome ? produtos[index].nome : "este produto";
+        const confirmar = confirm("Tem certeza que deseja excluir " + nomeProduto + "?\n\nEssa ação remove o produto da lista do admin. Para aplicar no site, gere novamente o sketchup.html.");
+        if (confirmar) { produtos.splice(index, 1); salvar(); render(); }
+      }
       if (btn.dataset.action === "duplicate") { produtos.splice(index + 1, 0, Object.assign({}, produtos[index])); salvar(); render(); }
     });
     document.getElementById("exportJson").addEventListener("click", function() { salvar(); baixarArquivo("backup-sketchup-keyato.json", localStorage.getItem(STORAGE_KEY), "application/json;charset=utf-8"); });
