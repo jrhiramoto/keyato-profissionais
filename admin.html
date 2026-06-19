@@ -34,6 +34,7 @@
     td:first-child { border-left: 1px solid #eee9e1; border-radius: 14px 0 0 14px; }
     td:last-child { border-right: 1px solid #eee9e1; border-radius: 0 14px 14px 0; }
     .thumb-preview { width: 54px; height: 54px; border-radius: 12px; object-fit: cover; background: #eee; display: block; }
+    .thumb-placeholder { width: 54px; height: 54px; border-radius: 12px; background: #eee; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; color:#777; }
     .small-input { min-width: 190px; }
     .name-input { min-width: 260px; }
     .url-input { min-width: 320px; }
@@ -63,14 +64,8 @@
 
     <section class="panel">
       <div class="grid">
-        <div>
-          <label>Link do arquivo .RAR com todos os SketchUps</label>
-          <input id="rarLink" type="url" placeholder="https://drive.google.com/..." />
-        </div>
-        <div>
-          <label>Caminho da logo</label>
-          <input id="logoPath" type="text" value="logo-site-catalogo.jpg" />
-        </div>
+        <div><label>Link do arquivo .RAR com todos os SketchUps</label><input id="rarLink" type="url" placeholder="https://drive.google.com/..." /></div>
+        <div><label>Caminho da logo</label><input id="logoPath" type="text" value="logo-site-catalogo.jpg" /></div>
       </div>
       <div class="actions">
         <button class="primary" id="addProduct">+ Adicionar produto</button>
@@ -84,731 +79,708 @@
     </section>
 
     <section class="panel">
-      <div class="toolbar">
-        <input class="search" id="adminSearch" type="search" placeholder="Buscar produto no admin..." />
-        <span class="muted" id="totalInfo"></span>
-      </div>
+      <div class="toolbar"><input class="search" id="adminSearch" type="search" placeholder="Buscar produto no admin..." /><span class="muted" id="productCount"></span></div>
       <div class="table-wrap">
-        <table>
-          <thead>
-            <tr><th>Miniatura</th><th>Nome do produto</th><th>Arquivo</th><th>Link SketchUp</th><th>Imagem</th><th>Ações</th></tr>
-          </thead>
-          <tbody id="tbody"></tbody>
-        </table>
+        <table><thead><tr><th>Miniatura</th><th>Nome do produto</th><th>Arquivo</th><th>Link SketchUp</th><th>Imagem</th><th>Ações</th></tr></thead><tbody id="productRows"></tbody></table>
       </div>
     </section>
   </main>
 
   <script>
-    const dadosIniciais = [
+    const SEED_PRODUCTS = [
   {
     "nome": "ZP4295 - PUXADOR ALLEN GRANADO 160",
     "arquivo": "ZP4295 - PUXADOR ALLEN GRANADO 160.skp",
-    "link": "https://drive.google.com/uc?export=download&id=13fnVdx3ZBzpdttibEii0O6Z93i8DzOg3",
+    "link": "https://drive.google.com/file/d/13fnVdx3ZBzpdttibEii0O6Z93i8DzOg3/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP4301 - PUXADOR ALLEN 160",
     "arquivo": "ZP4301 - PUXADOR ALLEN 160.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1HAYCN6CDLTW3iO9DlVuzBbAuBC_NhIJk",
+    "link": "https://drive.google.com/file/d/1HAYCN6CDLTW3iO9DlVuzBbAuBC_NhIJk/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5718 - PUXADOR HORSES 192",
     "arquivo": "ZP5718 - PUXADOR HORSES 192.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1miR6HGaClJk892qBLHnHD12iBWhWLOnj",
+    "link": "https://drive.google.com/file/d/1miR6HGaClJk892qBLHnHD12iBWhWLOnj/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP0178.192 - PUXADOR KEN 192",
     "arquivo": "ZP0178.192 - PUXADOR KEN 192.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1JysfH0kDQYJfUWQYRZhKxEVBnkB8rhgq",
+    "link": "https://drive.google.com/file/d/1JysfH0kDQYJfUWQYRZhKxEVBnkB8rhgq/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP1278.192 - PUXADOR KEN GRANADO 192",
     "arquivo": "ZP1278.192 - PUXADOR KEN GRANADO 192.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1DJqI7ocKsuX6ahHGlAYNR_2v3kWSV5EL",
+    "link": "https://drive.google.com/file/d/1DJqI7ocKsuX6ahHGlAYNR_2v3kWSV5EL/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP1843 - PUXADOR NORD 160",
     "arquivo": "ZP1843 - PUXADOR NORD 160.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1mr1GnGFQKaxxSZa0FY0VJOr1ncu1ZK_Q",
+    "link": "https://drive.google.com/file/d/1mr1GnGFQKaxxSZa0FY0VJOr1ncu1ZK_Q/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP1844 - NORD GRANADO 160",
     "arquivo": "ZP1844 - NORD GRANADO 160.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1yxOMeIJky0s_1k30XRd_1tB0oxGlRr8y",
+    "link": "https://drive.google.com/file/d/1yxOMeIJky0s_1k30XRd_1tB0oxGlRr8y/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP1072 - PUXADOR PHENIX 64",
     "arquivo": "ZP1072 - PUXADOR PHENIX 64.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1DTRwjvhMgirwlFQLZypXb_TZghce7Mnd",
+    "link": "https://drive.google.com/file/d/1DTRwjvhMgirwlFQLZypXb_TZghce7Mnd/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP1073 - PUXADOR PHENIX 192",
     "arquivo": "ZP1073 - PUXADOR PHENIX 192.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1HqSli-DSQGZHjGFTGy5HPifUI6J8if-b",
+    "link": "https://drive.google.com/file/d/1HqSli-DSQGZHjGFTGy5HPifUI6J8if-b/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP1074 - PUXADOR PHENIX 320",
     "arquivo": "ZP1074 - PUXADOR PHENIX 320.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1jvFS8NyjSL2qf0pvLth16s1G_D_JPBaX",
+    "link": "https://drive.google.com/file/d/1jvFS8NyjSL2qf0pvLth16s1G_D_JPBaX/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP1075 - PUXADOR PHENIX 448",
     "arquivo": "ZP1075 - PUXADOR PHENIX 448.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1XDelOXFk78aY_k8g5dIwXyXwvJ9crRYe",
+    "link": "https://drive.google.com/file/d/1XDelOXFk78aY_k8g5dIwXyXwvJ9crRYe/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5401.192 - SANTA FÉ GRANADO 192",
     "arquivo": "ZP5401.192 - SANTA FÉ GRANADO 192.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1d4djlv-7anGtjA_f0FgbjjcvCRYxD2LU",
+    "link": "https://drive.google.com/file/d/1d4djlv-7anGtjA_f0FgbjjcvCRYxD2LU/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5450.096 - SORENTO 96",
     "arquivo": "ZP5450.096 - SORENTO 96.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1F3_Ip7rDXbVjiNgI6fwU_vsBoj2CAoV7",
+    "link": "https://drive.google.com/file/d/1F3_Ip7rDXbVjiNgI6fwU_vsBoj2CAoV7/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5450.320 - SORENTO 320",
     "arquivo": "ZP5450.320 - SORENTO 320.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1qHzPOVrwn8XDBL-jvf38e2bEXsFGq7d-",
+    "link": "https://drive.google.com/file/d/1qHzPOVrwn8XDBL-jvf38e2bEXsFGq7d-/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5451.096 - SORENTO GRANADO 96",
     "arquivo": "ZP5451.096 - SORENTO GRANADO 96.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1Zm_N7dD9RKKRduUY8vZJUfU4lFaLvoY5",
+    "link": "https://drive.google.com/file/d/1Zm_N7dD9RKKRduUY8vZJUfU4lFaLvoY5/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5451.320 - SORENTO GRANADO 320",
     "arquivo": "ZP5451.320 - SORENTO GRANADO 320.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1yHKBJB7jNv8s29HRo800JO9qiP-pSOsp",
+    "link": "https://drive.google.com/file/d/1yHKBJB7jNv8s29HRo800JO9qiP-pSOsp/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5763.160 - PUXADOR TELLUS 160",
     "arquivo": "ZP5763.160 - PUXADOR TELLUS 160.skp",
-    "link": "https://drive.google.com/uc?export=download&id=12jv6g6DAKdViwGOZIjfkKJR7sRU0JC3F",
+    "link": "https://drive.google.com/file/d/12jv6g6DAKdViwGOZIjfkKJR7sRU0JC3F/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5763.224 - PUXADOR TELLUS 224",
     "arquivo": "ZP5763.224 - PUXADOR TELLUS 224.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1qyjE01aIA8BUQLa7xfI4nJyDtQK5NoEl",
+    "link": "https://drive.google.com/file/d/1qyjE01aIA8BUQLa7xfI4nJyDtQK5NoEl/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5763.352 - PUXADOR TELLUS 352",
     "arquivo": "ZP5763.352 - PUXADOR TELLUS 352.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1OlJtL26Q-ADe4KROqt6XzjNwEoZFlrb7",
+    "link": "https://drive.google.com/file/d/1OlJtL26Q-ADe4KROqt6XzjNwEoZFlrb7/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5763.448 - PUXADOR TELLUS 448",
     "arquivo": "ZP5763.448 - PUXADOR TELLUS 448.skp",
-    "link": "https://drive.google.com/uc?export=download&id=10Ot07hb792KMq9jSagsdwHzU5r22WpW3",
+    "link": "https://drive.google.com/file/d/10Ot07hb792KMq9jSagsdwHzU5r22WpW3/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5763.544 - PUXADOR TELLUS 544",
     "arquivo": "ZP5763.544 - PUXADOR TELLUS 544.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1tc4pKsYZkl61swOynSShf5CYIEHZMPXC",
+    "link": "https://drive.google.com/file/d/1tc4pKsYZkl61swOynSShf5CYIEHZMPXC/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5763.800 - PUXADOR TELLUS 800",
     "arquivo": "ZP5763.800 - PUXADOR TELLUS 800.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1PQfeA_oJxnVJZrcDsoJ-J_nojPkdAok2",
+    "link": "https://drive.google.com/file/d/1PQfeA_oJxnVJZrcDsoJ-J_nojPkdAok2/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5765.160 - PUXADOR TELLUS GRANADO 160",
     "arquivo": "ZP5765.160 - PUXADOR TELLUS GRANADO 160.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1AIWqHJfkjpn-aq6BLt-9MAYz-ZxfBnke",
+    "link": "https://drive.google.com/file/d/1AIWqHJfkjpn-aq6BLt-9MAYz-ZxfBnke/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5765.224 - PUXADOR TELLUS GRANADO 224",
     "arquivo": "ZP5765.224 - PUXADOR TELLUS GRANADO 224.skp",
-    "link": "https://drive.google.com/uc?export=download&id=17NQyNbLr6VMdpnBUKP6F8TGK5ojqpadW",
+    "link": "https://drive.google.com/file/d/17NQyNbLr6VMdpnBUKP6F8TGK5ojqpadW/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5765.352 - PUXADOR TELLUS GRANADO 352",
     "arquivo": "ZP5765.352 - PUXADOR TELLUS GRANADO 352.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1GhrJv-ngtMGph1u6wI-o2s6fQLvnb_Oh",
+    "link": "https://drive.google.com/file/d/1GhrJv-ngtMGph1u6wI-o2s6fQLvnb_Oh/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5765.448 - PUXADOR TELLUS GRANADO 448",
     "arquivo": "ZP5765.448 - PUXADOR TELLUS GRANADO 448.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1JYinDLKUSosE2q-pvuXj1NlB2Y3LSgaT",
+    "link": "https://drive.google.com/file/d/1JYinDLKUSosE2q-pvuXj1NlB2Y3LSgaT/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5765.544 - PUXADOR TELLUS GRANADO 544",
     "arquivo": "ZP5765.544 - PUXADOR TELLUS GRANADO 544.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1tH-sRVqYKWsQWLPMDjq_lSQqHx5aGT9B",
+    "link": "https://drive.google.com/file/d/1tH-sRVqYKWsQWLPMDjq_lSQqHx5aGT9B/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5765.800 - PUXADOR TELLUS GRANADO 800",
     "arquivo": "ZP5765.800 - PUXADOR TELLUS GRANADO 800.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1H8PN6muZz_G_06QaYsts1xYJsEl_ABl_",
+    "link": "https://drive.google.com/file/d/1H8PN6muZz_G_06QaYsts1xYJsEl_ABl_/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5779.160 - PUXADOR VALVET 160",
     "arquivo": "ZP5779.160 - PUXADOR VALVET 160.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1li8UxpaKETbqUOvYH5MOOryx8-HLux_v",
+    "link": "https://drive.google.com/file/d/1li8UxpaKETbqUOvYH5MOOryx8-HLux_v/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5779.224 - PUXADOR VALVET 224",
     "arquivo": "ZP5779.224 - PUXADOR VALVET 224.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1_LdBqG1tmG2p5dKHa1-8993i8fvnh1Q-",
+    "link": "https://drive.google.com/file/d/1_LdBqG1tmG2p5dKHa1-8993i8fvnh1Q-/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5779.352 - PUXADOR VALVET 352",
     "arquivo": "ZP5779.352 - PUXADOR VALVET 352.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1v4as8Z6bzUs4jMS-64oQSNrV_-QoMUQt",
+    "link": "https://drive.google.com/file/d/1v4as8Z6bzUs4jMS-64oQSNrV_-QoMUQt/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5779.448 - PUXADOR VALVET 448",
     "arquivo": "ZP5779.448 - PUXADOR VALVET 448.skp",
-    "link": "https://drive.google.com/uc?export=download&id=15Gr4ugkzneYeH30xuUhOh-yYg5j9a959",
+    "link": "https://drive.google.com/file/d/15Gr4ugkzneYeH30xuUhOh-yYg5j9a959/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5779.544 - PUXADOR VALVET 544",
     "arquivo": "ZP5779.544 - PUXADOR VALVET 544.skp",
-    "link": "https://drive.google.com/uc?export=download&id=12kExGCT5odlHvTwrrcuDAj7ZSuHU7eDp",
+    "link": "https://drive.google.com/file/d/12kExGCT5odlHvTwrrcuDAj7ZSuHU7eDp/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5779.800 - PUXADOR VALVET 800",
     "arquivo": "ZP5779.800 - PUXADOR VALVET 800.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1WNSHZtAn_FvP4uB0zSeI3qniIxZt_7sW",
+    "link": "https://drive.google.com/file/d/1WNSHZtAn_FvP4uB0zSeI3qniIxZt_7sW/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5705 - PUXADOR VERSALHES 160",
     "arquivo": "ZP5705 - PUXADOR VERSALHES 160.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1KhEX4MkSV_5ahYZOW6hokBJPAhXW7M8m",
+    "link": "https://drive.google.com/file/d/1KhEX4MkSV_5ahYZOW6hokBJPAhXW7M8m/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5706 - PUXADOR VERSALHES 320",
     "arquivo": "ZP5706 - PUXADOR VERSALHES 320.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1LkdLUI11hx_-iwgtoRQQWLqlcW5xf0wK",
+    "link": "https://drive.google.com/file/d/1LkdLUI11hx_-iwgtoRQQWLqlcW5xf0wK/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5707 - PUXADOR VERSALHES 448",
     "arquivo": "ZP5707 - PUXADOR VERSALHES 448.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1oVeWIVsP8GnUKrTJrP9AddZ5pwDREqBf",
+    "link": "https://drive.google.com/file/d/1oVeWIVsP8GnUKrTJrP9AddZ5pwDREqBf/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5805 - PUXADOR KITTEN",
     "arquivo": "ZP5805 - PUXADOR KITTEN.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1W0g49QPRnGiZhfYlDh0mWBF5uPitcVfr",
+    "link": "https://drive.google.com/file/d/1W0g49QPRnGiZhfYlDh0mWBF5uPitcVfr/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5780 - PUXADOR PIPE SIMÉTRICO",
     "arquivo": "ZP5780 - PUXADOR PIPE SIMÉTRICO.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1Ch4xNFHHzMsK6sqUnN6nD9SdlaeMEEoA",
+    "link": "https://drive.google.com/file/d/1Ch4xNFHHzMsK6sqUnN6nD9SdlaeMEEoA/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5780D - PUXADOR PIPE DIREITO",
     "arquivo": "ZP5780D - PUXADOR PIPE DIREITO.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1NEoYxhGa_ZqIGWzfOeZHP8C34u1J9sQL",
+    "link": "https://drive.google.com/file/d/1NEoYxhGa_ZqIGWzfOeZHP8C34u1J9sQL/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5780E - PUXADOR PIPE ESQUERDO",
     "arquivo": "ZP5780E - PUXADOR PIPE ESQUERDO.skp",
-    "link": "https://drive.google.com/uc?export=download&id=12XqIdB5w5UIk7FUXg8Mr4p_dZj3Rwldd",
+    "link": "https://drive.google.com/file/d/12XqIdB5w5UIk7FUXg8Mr4p_dZj3Rwldd/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5420 - PLYMOUTH",
     "arquivo": "ZP5420 - PLYMOUTH.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1f_zj-06NO-cNUG3nxPCql2hb5gG8Gs6x",
+    "link": "https://drive.google.com/file/d/1f_zj-06NO-cNUG3nxPCql2hb5gG8Gs6x/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP4318 - PUXADOR SHELL 64",
     "arquivo": "ZP4318 - PUXADOR SHELL 64.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1L8rcNPQEkqQBYZP8rEiP9jj6WJBRhCWr",
+    "link": "https://drive.google.com/file/d/1L8rcNPQEkqQBYZP8rEiP9jj6WJBRhCWr/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP4319 - PUXADOR SHELL 48",
     "arquivo": "ZP4319 - PUXADOR SHELL 48.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1wzqJa74VX3Cq2hkbgWC9yfyE3GQktNbg",
+    "link": "https://drive.google.com/file/d/1wzqJa74VX3Cq2hkbgWC9yfyE3GQktNbg/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5452 - CASSA GRANADO",
     "arquivo": "ZP5452 - CASSA GRANADO.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1XmmlZX1cwD_aDoIuFaJgfmzE8Yr9iAWq",
+    "link": "https://drive.google.com/file/d/1XmmlZX1cwD_aDoIuFaJgfmzE8Yr9iAWq/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5711 - PUXADOR DIETRO",
     "arquivo": "ZP5711 - PUXADOR DIETRO.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1nSLppjGEQ7Mu7YaDYJ8PR2QKs4wYd0_3",
+    "link": "https://drive.google.com/file/d/1nSLppjGEQ7Mu7YaDYJ8PR2QKs4wYd0_3/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5457 - LIVORNO",
     "arquivo": "ZP5457 - LIVORNO.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1Re3yjpRWTOTw8knYw_ZmWPsPn6CGbHci",
+    "link": "https://drive.google.com/file/d/1Re3yjpRWTOTw8knYw_ZmWPsPn6CGbHci/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5458 - MODENA",
     "arquivo": "ZP5458 - MODENA.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1RX_61Za-7N6tXbVEv5x26kjbBRiGuAxa",
+    "link": "https://drive.google.com/file/d/1RX_61Za-7N6tXbVEv5x26kjbBRiGuAxa/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5405 - NEW QUADRO",
     "arquivo": "ZP5405 - NEW QUADRO.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1cj9m9nAhlRYqUbsj4iUAI9Mr_mXSIYPg",
+    "link": "https://drive.google.com/file/d/1cj9m9nAhlRYqUbsj4iUAI9Mr_mXSIYPg/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5406 - NEW TONDO",
     "arquivo": "ZP5406 - NEW TONDO.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1-UUkHiztih-1YPtiDAr8b8B96c0siwk6",
+    "link": "https://drive.google.com/file/d/1-UUkHiztih-1YPtiDAr8b8B96c0siwk6/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP0058 - PUXADOR SMART 160",
     "arquivo": "ZP0058 - PUXADOR SMART 160.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1qGC0NM_0VIs42faLw-7TJk2xPkwaAlf6",
+    "link": "https://drive.google.com/file/d/1qGC0NM_0VIs42faLw-7TJk2xPkwaAlf6/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5620 - PUXADOR SMART GRANADO 312",
     "arquivo": "ZP5620 - PUXADOR SMART GRANADO 312.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1Jp0i74RwCRfY4qGQkAywz_NfnEb_9UKG",
+    "link": "https://drive.google.com/file/d/1Jp0i74RwCRfY4qGQkAywz_NfnEb_9UKG/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5459 - UDINE",
     "arquivo": "ZP5459 - UDINE.skp",
-    "link": "https://drive.google.com/uc?export=download&id=18UM2OknOEQ3Cc17CZOlcRq8hh9T80Qkp",
+    "link": "https://drive.google.com/file/d/18UM2OknOEQ3Cc17CZOlcRq8hh9T80Qkp/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5460 - PUXADOR CITIZEN PEQUENO",
     "arquivo": "ZP5460 - PUXADOR CITIZEN PEQUENO.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1jZUB8YCDbPEJRadlAdFn1MF-4DeftA0L",
+    "link": "https://drive.google.com/file/d/1jZUB8YCDbPEJRadlAdFn1MF-4DeftA0L/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5461 - PUXADOR CITIZEN GRANDE",
     "arquivo": "ZP5461 - PUXADOR CITIZEN GRANDE.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1lupwna7ZZdwuC8GMT6KZKwwYzGnY3nO6",
+    "link": "https://drive.google.com/file/d/1lupwna7ZZdwuC8GMT6KZKwwYzGnY3nO6/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5463 - PUXADOR CITIZEN 45º GRANDE",
     "arquivo": "ZP5463 - PUXADOR CITIZEN 45º GRANDE.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1W0TGOzndHC2Tf0k7HjWmEINLdEGFHczP",
+    "link": "https://drive.google.com/file/d/1W0TGOzndHC2Tf0k7HjWmEINLdEGFHczP/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP1857 - PUXADOR SOTTILE 160",
     "arquivo": "ZP1857 - PUXADOR SOTTILE 160.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1MgyVDtN5_nsIWqZKtt0m32Y5U6caEAfN",
+    "link": "https://drive.google.com/file/d/1MgyVDtN5_nsIWqZKtt0m32Y5U6caEAfN/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5404 - ANTIQUE",
     "arquivo": "ZP5404 - ANTIQUE.skp",
-    "link": "https://drive.google.com/uc?export=download&id=10g6iXUzOVSQVED5gzb19bppDlFh_A5zM",
+    "link": "https://drive.google.com/file/d/10g6iXUzOVSQVED5gzb19bppDlFh_A5zM/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5365 - BALI GRANADO PONTO",
     "arquivo": "ZP5365 - BALI GRANADO PONTO.skp",
-    "link": "https://drive.google.com/uc?export=download&id=10K1h6luGiEaNHGoWmFd9OyxLHsU8OFAm",
+    "link": "https://drive.google.com/file/d/10K1h6luGiEaNHGoWmFd9OyxLHsU8OFAm/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5403 - BEETLE",
     "arquivo": "ZP5403 - BEETLE.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1TPqr5tT4vAf4NSp5AqweET2WL-BMaBdy",
+    "link": "https://drive.google.com/file/d/1TPqr5tT4vAf4NSp5AqweET2WL-BMaBdy/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5402 - BEETLE COM BASE GRANADA",
     "arquivo": "ZP5402 - BEETLE COM BASE GRANADA.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1uowML8pKVmJs0VCFn906q4wM_PgENTMB",
+    "link": "https://drive.google.com/file/d/1uowML8pKVmJs0VCFn906q4wM_PgENTMB/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5768G - PUXADOR COIN GRANDE",
     "arquivo": "ZP5768G - PUXADOR COIN GRANDE.skp",
-    "link": "https://drive.google.com/uc?export=download&id=19lp38LvikrrsYYsdXyMIp5m9nv81g5Hm",
+    "link": "https://drive.google.com/file/d/19lp38LvikrrsYYsdXyMIp5m9nv81g5Hm/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5768M - PUXADOR COIN MEDIO",
     "arquivo": "ZP5768M - PUXADOR COIN MEDIO.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1R-68L4dWirFmjCVwQU50UTPUAjGULvli",
+    "link": "https://drive.google.com/file/d/1R-68L4dWirFmjCVwQU50UTPUAjGULvli/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5768P - PUXADOR COIN PEQUENO",
     "arquivo": "ZP5768P - PUXADOR COIN PEQUENO.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1Zhaugjle9ejpe33GYKausocRKZwsjWNd",
+    "link": "https://drive.google.com/file/d/1Zhaugjle9ejpe33GYKausocRKZwsjWNd/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP3949 - PUXADOR CRETA 64",
     "arquivo": "ZP3949 - PUXADOR CRETA 64.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1k7JjFeQ8q561XwrrunDwIUS8VYy-ZtDF",
+    "link": "https://drive.google.com/file/d/1k7JjFeQ8q561XwrrunDwIUS8VYy-ZtDF/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP3950 - PUXADOR CRETA 192",
     "arquivo": "ZP3950 - PUXADOR CRETA 192.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1Rmaz0fdZK1cfcylruM-Rf-6YQGBViWiQ",
+    "link": "https://drive.google.com/file/d/1Rmaz0fdZK1cfcylruM-Rf-6YQGBViWiQ/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5238 - PUXADOR CUP",
     "arquivo": "ZP5238 - PUXADOR CUP.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1GQOeHSJRBklnFyg5JgDaR7XIFE-xE0Tb",
+    "link": "https://drive.google.com/file/d/1GQOeHSJRBklnFyg5JgDaR7XIFE-xE0Tb/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5473 - PUXADOR DISK PEQUENO",
     "arquivo": "ZP5473 - PUXADOR DISK PEQUENO.skp",
-    "link": "https://drive.google.com/uc?export=download&id=11LVAjt-Ez__P2jHPrT2yffMNMbxQRkZg",
+    "link": "https://drive.google.com/file/d/11LVAjt-Ez__P2jHPrT2yffMNMbxQRkZg/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5474 - PUXADOR DISK GRANDE",
     "arquivo": "ZP5474 - PUXADOR DISK GRANDE.skp",
-    "link": "https://drive.google.com/uc?export=download&id=199gKDbhp-xIYhsfFPiIDBy0Xc4wulfHY",
+    "link": "https://drive.google.com/file/d/199gKDbhp-xIYhsfFPiIDBy0Xc4wulfHY/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP1795 - PUXADOR FUNE COURO",
     "arquivo": "ZP1795 - PUXADOR FUNE COURO.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1possFT-WmB_TRQqWl1O0CNvLvVmzyRpD",
+    "link": "https://drive.google.com/file/d/1possFT-WmB_TRQqWl1O0CNvLvVmzyRpD/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5717 - PUXADOR HORSES PONTO",
     "arquivo": "ZP5717 - PUXADOR HORSES PONTO.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1MP54vNb3Xu9c-rOhNB6ofbSMbtykb4gS",
+    "link": "https://drive.google.com/file/d/1MP54vNb3Xu9c-rOhNB6ofbSMbtykb4gS/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5364 - PUXADOR MINI BALI GRANADO PONTO",
     "arquivo": "ZP5364 - PUXADOR MINI BALI GRANADO PONTO.skp",
-    "link": "https://drive.google.com/uc?export=download&id=11snY-ADiC8Lzm9bTSspwsG0Cdu5ROD_R",
+    "link": "https://drive.google.com/file/d/11snY-ADiC8Lzm9bTSspwsG0Cdu5ROD_R/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5426 - PUXADOR PAIO 64",
     "arquivo": "ZP5426 - PUXADOR PAIO 64.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1P0z_-_ixAuSHyX20PYxtSBTX_8-RV_gt",
+    "link": "https://drive.google.com/file/d/1P0z_-_ixAuSHyX20PYxtSBTX_8-RV_gt/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP0074 - PUXADOR PLANA",
     "arquivo": "ZP0074 - PUXADOR PLANA.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1Enjb5-4_cIgFYp9EnRlv8RNpUyGO-Clh",
+    "link": "https://drive.google.com/file/d/1Enjb5-4_cIgFYp9EnRlv8RNpUyGO-Clh/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP4308 - PUXADOR RADIO PEQUENO",
     "arquivo": "ZP4308 - PUXADOR RADIO PEQUENO.skp",
-    "link": "https://drive.google.com/uc?export=download&id=16NNYV6B18ywc7d6mrBvAKooZboeXUheC",
+    "link": "https://drive.google.com/file/d/16NNYV6B18ywc7d6mrBvAKooZboeXUheC/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP4309 - PUXADOR RADIO MEDIO",
     "arquivo": "ZP4309 - PUXADOR RADIO MEDIO.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1uqXrcb6BT8xQvq87V7zCLxE6C8u_6K11",
+    "link": "https://drive.google.com/file/d/1uqXrcb6BT8xQvq87V7zCLxE6C8u_6K11/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP4310 - PUXADOR RADIO GRANDE",
     "arquivo": "ZP4310 - PUXADOR RADIO GRANDE.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1LBFWM9dJt9922glKfRtVwQd0HVW0ZuDT",
+    "link": "https://drive.google.com/file/d/1LBFWM9dJt9922glKfRtVwQd0HVW0ZuDT/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5444 - RÁDIO COM BASE",
     "arquivo": "ZP5444 - RÁDIO COM BASE.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1EgWO0-wTx0P3dUa7KLr3FMju5PPZDflM",
+    "link": "https://drive.google.com/file/d/1EgWO0-wTx0P3dUa7KLr3FMju5PPZDflM/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5401.000 - PUXADOR SANTA FÉ GRANADO PONTO",
     "arquivo": "ZP5401.000 - PUXADOR SANTA FÉ GRANADO PONTO.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1q1hX5a_t6yPgWwu7hhFSK3JuzelXtjwZ",
+    "link": "https://drive.google.com/file/d/1q1hX5a_t6yPgWwu7hhFSK3JuzelXtjwZ/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5761 - PUXADOR SEIXO PEQUENO",
     "arquivo": "ZP5761 - PUXADOR SEIXO PEQUENO.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1A1HQv-wh3NJDts4sDBWALDanVHSachLY",
+    "link": "https://drive.google.com/file/d/1A1HQv-wh3NJDts4sDBWALDanVHSachLY/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5762 - PUXADOR SEIXO GRANDE",
     "arquivo": "ZP5762 - PUXADOR SEIXO GRANDE.skp",
-    "link": "https://drive.google.com/uc?export=download&id=14It_utXpX4EZGgQgbqDTYTYu1iQM0uJe",
+    "link": "https://drive.google.com/file/d/14It_utXpX4EZGgQgbqDTYTYu1iQM0uJe/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5716 - PUXADOR SHEER",
     "arquivo": "ZP5716 - PUXADOR SHEER.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1iz6re4bVaAo8a-7U_ndD-vThlnVJPcuu",
+    "link": "https://drive.google.com/file/d/1iz6re4bVaAo8a-7U_ndD-vThlnVJPcuu/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5440 - SIRIUS 32",
     "arquivo": "ZP5440 - SIRIUS 32.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1cCReaKAJwz0aKBJsf8sqMY8zY4vsKJoT",
+    "link": "https://drive.google.com/file/d/1cCReaKAJwz0aKBJsf8sqMY8zY4vsKJoT/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5441 - SIRIUS 48",
     "arquivo": "ZP5441 - SIRIUS 48.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1IBN9H3uzdN-RLAYXEG4yqOgQbp1UCrFJ",
+    "link": "https://drive.google.com/file/d/1IBN9H3uzdN-RLAYXEG4yqOgQbp1UCrFJ/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5451.000 - SORENTO GRANADO PONTO",
     "arquivo": "ZP5451.000 - SORENTO GRANADO PONTO.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1QyWbJKPcwpsHeaPx9margn7z3Bzgl_72",
+    "link": "https://drive.google.com/file/d/1QyWbJKPcwpsHeaPx9margn7z3Bzgl_72/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5450.000 - SORENTO PONTO",
     "arquivo": "ZP5450.000 - SORENTO PONTO.skp",
-    "link": "https://drive.google.com/uc?export=download&id=17Y8iat2H5nsLAvPiP2l99gD26yGL2kT_",
+    "link": "https://drive.google.com/file/d/17Y8iat2H5nsLAvPiP2l99gD26yGL2kT_/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5779 - PUXADOR VALVET PONTO",
     "arquivo": "ZP5779 - PUXADOR VALVET PONTO.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1UG_cXXs7ZN2NciQq25xAXHt8MsS2ciDj",
+    "link": "https://drive.google.com/file/d/1UG_cXXs7ZN2NciQq25xAXHt8MsS2ciDj/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP5704 - PUXADOR VERSALHES PONTO",
     "arquivo": "ZP5704 - PUXADOR VERSALHES PONTO.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1b4FYKLvdr5i1tHNYlRNjS5wXYzsUmgRp",
+    "link": "https://drive.google.com/file/d/1b4FYKLvdr5i1tHNYlRNjS5wXYzsUmgRp/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP1883 - PUXADOR ÓRION PEQUENO",
     "arquivo": "ZP1883 - PUXADOR ÓRION PEQUENO.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1oLbIWz9AE7AmzqE_WSbfxfq9cK2NYNzL",
+    "link": "https://drive.google.com/file/d/1oLbIWz9AE7AmzqE_WSbfxfq9cK2NYNzL/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP1884 - PUXADOR ÓRION MÉDIO",
     "arquivo": "ZP1884 - PUXADOR ÓRION MÉDIO.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1Rf3jTuT5nM7S3KYBdgEDU5iKhEiXEYJd",
+    "link": "https://drive.google.com/file/d/1Rf3jTuT5nM7S3KYBdgEDU5iKhEiXEYJd/view?usp=drive_link",
     "imagem": ""
   },
   {
     "nome": "ZP1885 - PUXADOR ÓRION GRANDE",
     "arquivo": "ZP1885 - PUXADOR ÓRION GRANDE.skp",
-    "link": "https://drive.google.com/uc?export=download&id=1Cd4m0IxLzsfxYUo7nve6xFuOo9hZXxHH",
+    "link": "https://drive.google.com/file/d/1Cd4m0IxLzsfxYUo7nve6xFuOo9hZXxHH/view?usp=drive_link",
     "imagem": ""
   }
 ];
-    const rarInicial = "https://drive.google.com/uc?export=download&id=1gvGPDKkhbPrU2mFyhGL7Nr05Ku4T8wkw";
-    const storageKey = "keyato_admin_sketchup_v2";
+    const SEED_RAR_LINK = "https://drive.google.com/file/d/1gvGPDKkhbPrU2mFyhGL7Nr05Ku4T8wkw/view?usp=drive_link";
+    const STORAGE_KEY = "keyato_sketchup_admin_v2";
     let produtos = [];
 
-    function normalizar(texto) {
-      return (texto || "").toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/º/g, "o");
-    }
+    function normalizar(texto) { return (texto || "").toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/º/g, "o"); }
+    function esc(texto) { return (texto || "").toString().replace(/[&<>'"]/g, function(c) { return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]; }); }
+
     function carregar() {
-      const salvo = localStorage.getItem(storageKey);
+      const salvo = localStorage.getItem(STORAGE_KEY);
       if (salvo) {
         try {
           const dados = JSON.parse(salvo);
-          produtos = dados.produtos || dadosIniciais;
-          document.getElementById("rarLink").value = dados.rarLink || rarInicial;
-          document.getElementById("logoPath").value = dados.logoPath || "logo-site-catalogo.jpg";
-          return;
-        } catch(e) {}
+          if (Array.isArray(dados.produtos) && dados.produtos.length) {
+            produtos = dados.produtos;
+            document.getElementById("rarLink").value = dados.rarLink || SEED_RAR_LINK;
+            document.getElementById("logoPath").value = dados.logoPath || "logo-site-catalogo.jpg";
+            return;
+          }
+        } catch (e) {}
       }
-      produtos = dadosIniciais;
-      document.getElementById("rarLink").value = rarInicial;
+      produtos = SEED_PRODUCTS.map(function(item) { return Object.assign({}, item); });
+      document.getElementById("rarLink").value = SEED_RAR_LINK;
       document.getElementById("logoPath").value = "logo-site-catalogo.jpg";
+      salvar();
     }
-    function salvar() {
-      localStorage.setItem(storageKey, JSON.stringify({ produtos, rarLink: document.getElementById("rarLink").value.trim(), logoPath: document.getElementById("logoPath").value.trim() }));
-    }
-    function escapeHtml(texto) {
-      return (texto || "").replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
-    }
+
+    function salvar() { localStorage.setItem(STORAGE_KEY, JSON.stringify({ rarLink: document.getElementById("rarLink").value.trim(), logoPath: document.getElementById("logoPath").value.trim(), produtos: produtos })); }
+
     function render() {
+      const tbody = document.getElementById("productRows");
       const termo = normalizar(document.getElementById("adminSearch").value);
-      const tbody = document.getElementById("tbody");
-      const filtrados = produtos.map((p, index) => ({ ...p, index })).filter(p => normalizar([p.nome, p.arquivo, p.link, p.imagem].join(" ")).includes(termo));
-      tbody.innerHTML = filtrados.map(p => `
-        <tr>
-          <td>${p.imagem ? `<img class="thumb-preview" src="${escapeHtml(p.imagem)}" alt="">` : `<div class="thumb-preview"></div>`}</td>
-          <td><input class="name-input" value="${escapeHtml(p.nome)}" data-index="${p.index}" data-field="nome"></td>
-          <td><input class="small-input" value="${escapeHtml(p.arquivo)}" data-index="${p.index}" data-field="arquivo"></td>
-          <td><input class="url-input" value="${escapeHtml(p.link)}" data-index="${p.index}" data-field="link"></td>
-          <td><input class="small-input" value="${escapeHtml(p.imagem || "")}" placeholder="sketchup_miniaturas/arquivo.jpg" data-index="${p.index}" data-field="imagem"></td>
-          <td><div class="row-actions"><button class="mini-btn light" data-action="duplicate" data-index="${p.index}">Duplicar</button><button class="mini-btn danger" data-action="delete" data-index="${p.index}">Excluir</button></div></td>
-        </tr>`).join("");
-      document.getElementById("totalInfo").textContent = `${filtrados.length} de ${produtos.length} produtos`;
+      const filtrados = produtos.map(function(p, index) { return Object.assign({index:index}, p); }).filter(function(p) { return normalizar(p.nome + " " + p.arquivo + " " + p.link + " " + p.imagem).includes(termo); });
+      document.getElementById("productCount").textContent = filtrados.length + " de " + produtos.length + " produtos";
+      tbody.innerHTML = filtrados.map(function(p) {
+        const thumb = p.imagem ? '<img class="thumb-preview" src="' + esc(p.imagem) + '" onerror="this.outerHTML=\'<div class=&quot;thumb-placeholder&quot;>3D</div>\'">' : '<div class="thumb-placeholder">3D</div>';
+        return '<tr>' +
+          '<td>' + thumb + '</td>' +
+          '<td><input class="name-input" value="' + esc(p.nome) + '" data-field="nome" data-index="' + p.index + '"></td>' +
+          '<td><input class="small-input" value="' + esc(p.arquivo || '') + '" data-field="arquivo" data-index="' + p.index + '"></td>' +
+          '<td><input class="url-input" value="' + esc(p.link || '') + '" data-field="link" data-index="' + p.index + '"></td>' +
+          '<td><input class="url-input" value="' + esc(p.imagem || '') + '" placeholder="sketchup_miniaturas/nome.jpg" data-field="imagem" data-index="' + p.index + '"></td>' +
+          '<td><div class="row-actions"><button class="mini-btn light" data-action="duplicate" data-index="' + p.index + '">Duplicar</button><button class="mini-btn danger" data-action="delete" data-index="' + p.index + '">Excluir</button></div></td>' +
+        '</tr>';
+      }).join("");
     }
-    document.addEventListener("input", e => {
-      const el = e.target;
-      if (el.matches("input[data-field]")) { const idx = Number(el.dataset.index); produtos[idx][el.dataset.field] = el.value; salvar(); }
-      if (el.id === "adminSearch") render();
-      if (el.id === "rarLink" || el.id === "logoPath") salvar();
-    });
-    document.addEventListener("click", e => {
-      const btn = e.target.closest("button"); if (!btn) return;
-      const action = btn.dataset.action; const idx = Number(btn.dataset.index);
-      if (action === "delete") { if (confirm("Excluir este produto?")) { produtos.splice(idx, 1); salvar(); render(); } }
-      if (action === "duplicate") { produtos.splice(idx + 1, 0, {...produtos[idx], nome: produtos[idx].nome + " cópia"}); salvar(); render(); }
-    });
-    document.getElementById("addProduct").addEventListener("click", () => { produtos.unshift({ nome: "", arquivo: "", link: "", imagem: "" }); salvar(); render(); window.scrollTo({ top: 0, behavior: "smooth" }); });
-    document.getElementById("clearDraft").addEventListener("click", () => { if (confirm("Isso apagará o rascunho salvo neste navegador. Continuar?")) { localStorage.removeItem(storageKey); carregar(); render(); } });
-    document.getElementById("exportJson").addEventListener("click", () => {
-      const data = JSON.stringify({ produtos, rarLink: document.getElementById("rarLink").value.trim(), logoPath: document.getElementById("logoPath").value.trim() }, null, 2);
-      baixarArquivo("backup-sketchup-keyato.json", data, "application/json");
-    });
-    document.getElementById("importJson").addEventListener("change", e => {
-      const file = e.target.files[0]; if (!file) return;
-      const reader = new FileReader();
-      reader.onload = () => { try { const dados = JSON.parse(reader.result); produtos = dados.produtos || []; document.getElementById("rarLink").value = dados.rarLink || ""; document.getElementById("logoPath").value = dados.logoPath || "logo-site-catalogo.jpg"; salvar(); render(); } catch(err) { alert("Arquivo JSON inválido."); } };
-      reader.readAsText(file);
-    });
-    function escapeForTemplate(texto) { return String(texto || "").replace(/`/g, "\\`").replace(/\\/g, "\\\\").replace(/\$/g, "\\$"); }
+
+    function adicionarProduto() { produtos.unshift({ nome: "Novo produto", arquivo: "novo-produto.skp", link: "", imagem: "" }); salvar(); render(); }
+
     function gerarSketchupHtml() {
-      const lista = produtos.map(p => ({ nome: (p.nome || "").trim(), arquivo: (p.arquivo || "").trim(), link: (p.link || "").trim(), imagem: (p.imagem || "").trim() })).filter(p => p.nome && p.link);
+      salvar();
+      const logo = document.getElementById("logoPath").value.trim() || "logo-site-catalogo.jpg";
       const rarLink = document.getElementById("rarLink").value.trim();
-      const logoPath = document.getElementById("logoPath").value.trim() || "logo-site-catalogo.jpg";
+      const publicData = produtos.filter(function(p) { return p.nome && p.link; }).map(function(p) { return { nome: p.nome, arquivo: p.arquivo || (p.nome + ".skp"), link: p.link, imagem: p.imagem || "" }; });
+      const jsonData = JSON.stringify(publicData, null, 2).replace(/<\//g, '<\\/');
       return `<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Biblioteca SketchUp | Keyato Profissionais</title>
+  <title>Biblioteca SketchUp | Keyato</title>
   <style>
     * { box-sizing: border-box; }
-    body { margin: 0; min-height: 100vh; background: #f5f5f3; color: #1f1f1f; font-family: Arial, sans-serif; }
-    .page { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 36px 0 48px; }
-    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-bottom: 28px; }
-    .brand { display: flex; align-items: center; gap: 16px; }
-    .brand img { width: 86px; height: auto; display: block; box-shadow: 0 6px 18px rgba(0,0,0,0.12); }
-    .brand-text small { display: block; font-size: 12px; letter-spacing: 1.6px; text-transform: uppercase; color: #777; font-weight: 700; margin-bottom: 4px; }
-    h1 { margin: 0; font-size: 32px; line-height: 1.1; }
-    .back { display: inline-flex; align-items: center; gap: 10px; padding: 13px 20px; border-radius: 999px; background: linear-gradient(135deg, #2d2d2d, #111); color: #fff; text-decoration: none; font-size: 14px; font-weight: 700; box-shadow: 0 12px 26px rgba(0,0,0,0.20), inset 0 1px 0 rgba(255,255,255,0.12); transition: all .25s ease; }
-    .back:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 16px 34px rgba(0,0,0,0.26), inset 0 1px 0 rgba(255,255,255,0.14); }
-    .intro { background: #fff; border: 1px solid #e6e1d8; border-radius: 20px; padding: 22px; box-shadow: 0 10px 28px rgba(0,0,0,0.06); margin-bottom: 18px; }
-    .intro p { margin: 0; color: #555; line-height: 1.55; }
-    .intro p + p { margin-top: 4px; }
-    .tools { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; margin-top: 18px; }
-    .search { width: 100%; border: 1px solid #ddd8cf; background: #fff; border-radius: 999px; padding: 15px 18px; font-size: 15px; outline: none; }
-    .search:focus { border-color: #5d1bc4; box-shadow: 0 0 0 3px rgba(93,27,196,.10); }
-    .download-all { white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; padding: 15px 20px; border-radius: 999px; background: linear-gradient(135deg, #5d1bc4, #32116e); color: #fff; text-decoration: none; font-weight: 700; box-shadow: 0 10px 25px rgba(93,27,196,.22); }
-    .meta { display: flex; justify-content: space-between; gap: 12px; align-items: center; color: #777; font-size: 13px; margin: 16px 2px; }
-    .list { display: grid; gap: 12px; }
-    .item { display: grid; grid-template-columns: 74px 1fr auto; gap: 16px; align-items: center; background: #fff; border: 1px solid #e7e2da; border-radius: 18px; padding: 12px; box-shadow: 0 6px 18px rgba(0,0,0,0.04); }
-    .thumb { width: 74px; height: 74px; border-radius: 14px; object-fit: cover; background: #efefef; border: 1px solid #eee; }
-    .thumb-placeholder { width: 74px; height: 74px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #eee, #fafafa); border: 1px solid #eee; font-weight: 800; color: #777; }
-    .item-name { font-weight: 800; font-size: 15px; margin-bottom: 5px; }
-    .item-file { color: #777; font-size: 13px; }
-    .btn { display: inline-flex; align-items: center; justify-content: center; padding: 12px 16px; border-radius: 999px; background: #1f1f1f; color: #fff; text-decoration: none; font-weight: 700; font-size: 13px; white-space: nowrap; }
-    .empty { display: none; text-align: center; padding: 36px; color: #777; background: #fff; border: 1px dashed #d8d2c7; border-radius: 18px; }
-    @media (max-width: 760px) { .topbar { align-items: flex-start; flex-direction: column; } .tools { grid-template-columns: 1fr; } .item { grid-template-columns: 64px 1fr; } .thumb, .thumb-placeholder { width: 64px; height: 64px; } .item .btn { grid-column: 1 / -1; width: 100%; } h1 { font-size: 26px; } }
+    body { margin: 0; background: #f5f5f3; color: #1f1f1f; font-family: Arial, sans-serif; }
+    .page { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 34px 0 52px; }
+    .topbar { display:flex; align-items:center; justify-content:space-between; gap:18px; margin-bottom:28px; }
+    .brand { display:flex; align-items:center; gap:16px; }
+    .brand img { width:88px; display:block; box-shadow: 0 6px 18px rgba(0,0,0,.12); }
+    h1 { margin:0 0 8px; font-size:32px; }
+    .subtitle { margin:0; color:#666; line-height:1.45; }
+    .btn-top { border-radius:999px; padding:13px 20px; text-decoration:none; color:#fff; font-weight:800; background:linear-gradient(135deg,#2d2d2d,#111); box-shadow:0 12px 26px rgba(0,0,0,.18); }
+    .hero { background:#fff; border:1px solid #e5e2dc; border-radius:22px; padding:22px; box-shadow:0 10px 30px rgba(0,0,0,.06); margin-bottom:18px; }
+    .search { width:100%; border:1px solid #ddd8cf; border-radius:16px; padding:15px 16px; font-size:15px; outline:none; }
+    .search:focus { border-color:#5d1bc4; box-shadow:0 0 0 3px rgba(93,27,196,.10); }
+    .actions { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-top:14px; }
+    .download-all { border-radius:999px; padding:13px 20px; text-decoration:none; color:#fff; font-weight:800; background:linear-gradient(135deg,#5d1bc4,#32116e); box-shadow:0 12px 26px rgba(93,27,196,.22); }
+    .meta { color:#777; font-size:13px; }
+    .list { display:grid; gap:12px; }
+    .item { display:grid; grid-template-columns:72px 1fr auto; gap:16px; align-items:center; background:#fff; border:1px solid #e5e2dc; border-radius:18px; padding:12px; box-shadow:0 8px 22px rgba(0,0,0,.045); }
+    .thumb { width:72px; height:72px; border-radius:14px; object-fit:cover; background:#eee; }
+    .thumb-placeholder { width:72px; height:72px; border-radius:14px; background:#eee; display:flex; align-items:center; justify-content:center; color:#777; font-weight:800; }
+    .item-name { font-weight:800; margin-bottom:5px; }
+    .item-file { color:#777; font-size:13px; }
+    .download { border-radius:999px; padding:11px 16px; text-decoration:none; background:#111; color:#fff; font-weight:800; white-space:nowrap; }
+    .empty { display:none; text-align:center; padding:24px; color:#777; }
+    @media(max-width:760px){ .topbar{align-items:flex-start; flex-direction:column;} h1{font-size:26px;} .item{grid-template-columns:58px 1fr;} .thumb,.thumb-placeholder{width:58px;height:58px;} .download{grid-column:1/-1;text-align:center;} }
   </style>
 </head>
 <body>
   <main class="page">
-    <header class="topbar">
-      <div class="brand">
-        <img src="${escapeForTemplate(logoPath)}" alt="Keyato Profissionais" />
-        <div class="brand-text"><small>Biblioteca</small><h1>Arquivos SketchUp</h1></div>
-      </div>
-      <a class="back" href="index.html">← Voltar ao catálogo</a>
-    </header>
-    <section class="intro">
-      <p>Baixe os arquivos SketchUp dos puxadores disponíveis neste catálogo.</p>
-      <p>Faça a busca por código ou nome do produto.</p>
-      <div class="tools">
-        <input class="search" id="search" type="search" placeholder="Buscar por código ou nome do produto..." autocomplete="off" />
-        ${rarLink ? `<a class="download-all" href="${escapeForTemplate(rarLink)}" target="_blank" rel="noopener noreferrer">Baixar todos (.RAR)</a>` : ``}
-      </div>
-    </section>
-    <div class="meta"><span id="count"></span><span>Busca sem diferenciação de acentos</span></div>
-    <section class="list" id="list"></section>
-    <div class="empty" id="empty">Nenhum arquivo encontrado.</div>
+    <header class="topbar"><div class="brand"><img src="${esc(logo)}" alt="Keyato Profissionais" /><div><h1>Biblioteca SketchUp</h1><p class="subtitle">Baixe os arquivos SketchUp dos puxadores disponíveis neste catálogo.<br>Faça a busca por código ou nome do produto.</p></div></div><a class="btn-top" href="index.html">Voltar ao catálogo</a></header>
+    <section class="hero"><input class="search" id="search" type="search" placeholder="Buscar por código ou nome do produto..." /><div class="actions"><span class="meta" id="count"></span><a class="download-all" href="${esc(rarLink)}" target="_blank" rel="noopener noreferrer">Baixar todos os arquivos</a></div></section>
+    <section class="list" id="list"></section><div class="empty" id="empty">Nenhum arquivo encontrado.</div>
   </main>
   <script>
-    const arquivos = ${JSON.stringify(lista, null, 2)};
+    const arquivos = ${jsonData};
     const list = document.getElementById("list");
     const search = document.getElementById("search");
     const count = document.getElementById("count");
     const empty = document.getElementById("empty");
     function normalizar(texto) { return (texto || "").toString().toLowerCase().normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").replace(/º/g, "o"); }
-    function esc(texto) { return (texto || "").replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
+    function escHtml(texto) { return (texto || "").toString().replace(/[&<>'"]/g, function(c) { return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]; }); }
     function renderizar() {
       const termo = normalizar(search.value.trim());
-      const filtrados = arquivos.filter(item => normalizar(item.nome + " " + item.arquivo).includes(termo));
-      list.innerHTML = filtrados.map(item => `
-        <article class="item">
-          ${item.imagem ? `<img class="thumb" src="${esc(item.imagem)}" alt="${esc(item.nome)}" onerror="this.outerHTML='<div class=&quot;thumb-placeholder&quot;>3D</div>'">` : `<div class="thumb-placeholder">3D</div>`}
-          <div><div class="item-name">${esc(item.nome)}</div><div class="item-file">${esc(item.arquivo)}</div></div>
-          <a class="btn" href="${esc(item.link)}" target="_blank" rel="noopener noreferrer">Baixar SketchUp</a>
-        </article>`).join("");
-      count.textContent = `${filtrados.length} de ${arquivos.length} arquivos`;
+      const filtrados = arquivos.filter(function(item) { return normalizar(item.nome + " " + item.arquivo).includes(termo); });
+      list.innerHTML = filtrados.map(function(item) {
+        const img = item.imagem ? '<img class="thumb" src="' + escHtml(item.imagem) + '" alt="' + escHtml(item.nome) + '" onerror="this.outerHTML=\'<div class=&quot;thumb-placeholder&quot;>3D</div>\'">' : '<div class="thumb-placeholder">3D</div>';
+        return '<article class="item">' + img + '<div><div class="item-name">' + escHtml(item.nome) + '</div><div class="item-file">' + escHtml(item.arquivo) + '</div></div><a class="download" href="' + escHtml(item.link) + '" target="_blank" rel="noopener noreferrer">Baixar SketchUp</a></article>';
+      }).join("");
+      count.textContent = filtrados.length + " de " + arquivos.length + " arquivos";
       empty.style.display = filtrados.length ? "none" : "block";
     }
     search.addEventListener("input", renderizar); renderizar();
-  </script>
+  <\/script>
 </body>
 </html>`;
     }
+
     function baixarArquivo(nome, conteudo, tipo) {
       const blob = new Blob([conteudo], { type: tipo });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url; a.download = nome; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
     }
-    document.getElementById("generateHtml").addEventListener("click", () => { salvar(); baixarArquivo("sketchup.html", gerarSketchupHtml(), "text/html;charset=utf-8"); });
+
+    document.getElementById("addProduct").addEventListener("click", adicionarProduto);
+    document.getElementById("adminSearch").addEventListener("input", render);
+    document.getElementById("rarLink").addEventListener("input", salvar);
+    document.getElementById("logoPath").addEventListener("input", salvar);
+    document.getElementById("productRows").addEventListener("input", function(e) {
+      const input = e.target; const index = Number(input.dataset.index); const field = input.dataset.field;
+      if (!Number.isNaN(index) && field) { produtos[index][field] = input.value; salvar(); if (field === "imagem") render(); }
+    });
+    document.getElementById("productRows").addEventListener("click", function(e) {
+      const btn = e.target.closest("button"); if (!btn) return; const index = Number(btn.dataset.index);
+      if (btn.dataset.action === "delete") { if (confirm("Excluir este produto?")) { produtos.splice(index, 1); salvar(); render(); } }
+      if (btn.dataset.action === "duplicate") { produtos.splice(index + 1, 0, Object.assign({}, produtos[index])); salvar(); render(); }
+    });
+    document.getElementById("exportJson").addEventListener("click", function() { salvar(); baixarArquivo("backup-sketchup-keyato.json", localStorage.getItem(STORAGE_KEY), "application/json;charset=utf-8"); });
+    document.getElementById("importJson").addEventListener("change", function(e) {
+      const file = e.target.files[0]; if (!file) return; const reader = new FileReader();
+      reader.onload = function() { try { const dados = JSON.parse(reader.result); if (!Array.isArray(dados.produtos)) throw new Error("Backup inválido"); localStorage.setItem(STORAGE_KEY, JSON.stringify(dados)); carregar(); render(); } catch (err) { alert("Não foi possível importar o backup."); } };
+      reader.readAsText(file);
+    });
+    document.getElementById("clearDraft").addEventListener("click", function() { if (confirm("Isso limpará o rascunho local e restaurará os produtos iniciais. Continuar?")) { localStorage.removeItem(STORAGE_KEY); carregar(); render(); } });
+    document.getElementById("generateHtml").addEventListener("click", function() { salvar(); baixarArquivo("sketchup.html", gerarSketchupHtml(), "text/html;charset=utf-8"); });
+
     carregar(); render();
   </script>
 </body>
