@@ -3,102 +3,58 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Biblioteca SketchUp | Keyato</title>
+  <title>Admin Biblioteca SketchUp</title>
   <style>
     * { box-sizing: border-box; }
-    body { margin: 0; background: #f5f5f3; color: #1f1f1f; font-family: Arial, sans-serif; }
-    .page { width: min(1220px, calc(100% - 32px)); margin: 0 auto; padding: 32px 0 48px; }
-    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 24px; }
-    .brand { display: flex; align-items: center; gap: 16px; }
-    .brand img { width: 86px; display: block; box-shadow: 0 6px 18px rgba(0,0,0,.12); }
-    h1 { margin: 0 0 6px; font-size: 30px; }
-    .subtitle { margin: 0; color: #666; line-height: 1.45; }
-    .panel { background: #fff; border: 1px solid #e5e2dc; border-radius: 18px; box-shadow: 0 10px 28px rgba(0,0,0,.06); padding: 20px; margin-bottom: 18px; }
+    body { margin: 0; font-family: Arial, sans-serif; background: #f7f6f3; color: #111; }
+    .page { width: min(1220px, calc(100% - 40px)); margin: 32px auto; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; gap: 20px; margin-bottom: 24px; }
+    .brand { display: flex; align-items: center; gap: 18px; }
+    .brand img { width: 86px; height: 86px; object-fit: cover; box-shadow: 0 8px 22px rgba(0,0,0,.12); }
+    h1 { margin: 0 0 6px; font-size: 32px; }
+    .subtitle { color: #555; line-height: 1.45; }
+    .pill-link { display: inline-flex; align-items: center; justify-content: center; padding: 13px 20px; border-radius: 999px; background: #fff; color: #111; text-decoration: none; font-weight: 800; border: 1px solid #dfd8cc; box-shadow: 0 10px 24px rgba(0,0,0,.06); }
+    .notice { background: #f0e9ff; border: 1px solid #d8c7ff; color: #21004a; border-radius: 14px; padding: 16px; margin-bottom: 18px; line-height: 1.5; }
+    .card { background: #fff; border: 1px solid #e6e1d8; border-radius: 18px; padding: 20px; box-shadow: 0 12px 30px rgba(0,0,0,.06); margin-bottom: 20px; }
     .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    label { display: block; font-size: 12px; font-weight: 700; color: #555; margin: 0 0 7px; text-transform: uppercase; letter-spacing: .5px; }
-    input { width: 100%; border: 1px solid #ddd8cf; background: #fff; border-radius: 12px; padding: 12px 13px; font-size: 14px; outline: none; }
+    label { display: block; font-size: 12px; letter-spacing: .6px; font-weight: 800; text-transform: uppercase; color: #444; margin-bottom: 7px; }
+    input { width: 100%; border: 1px solid #ddd5c8; border-radius: 12px; padding: 13px 14px; font-size: 14px; outline: none; background: #fff; }
     input:focus { border-color: #5d1bc4; box-shadow: 0 0 0 3px rgba(93,27,196,.10); }
-    .actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 16px; }
-    button, .btn { border: 0; border-radius: 999px; padding: 12px 17px; font-weight: 700; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; }
-    .primary { background: linear-gradient(135deg, #5d1bc4, #32116e); color: #fff; box-shadow: 0 10px 25px rgba(93,27,196,.22); }
-    .dark { background: linear-gradient(135deg, #2d2d2d, #111); color: #fff; }
-    .light { background: #fff; border: 1px solid #ddd8cf; color: #222; }
-    .danger { background: #fff1f1; color: #b42318; border: 1px solid #ffd0d0; }
-    .muted { color: #777; font-size: 13px; }
-    .toolbar { display: flex; gap: 12px; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
-    .search { flex: 1; min-width: 260px; }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+    button, .button { border: 0; cursor: pointer; border-radius: 999px; padding: 13px 18px; font-weight: 800; font-size: 14px; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+    .primary { background: linear-gradient(135deg, #5d1bc4, #32116e); color: #fff; box-shadow: 0 10px 22px rgba(93,27,196,.22); }
+    .dark { background: linear-gradient(135deg, #2d2d2d, #111); color: #fff; box-shadow: 0 10px 22px rgba(0,0,0,.18); }
+    .ghost { background: #fff; color: #111; border: 1px solid #dfd8cc; }
+    .danger { background: #fff1f1; color: #b00020; border: 1px solid #ffc6c6; }
+    .hint { color: #666; font-size: 13px; line-height: 1.45; margin-top: 12px; }
+    .search-admin { margin-bottom: 14px; }
     .table-wrap { overflow-x: auto; }
     table { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
-    th { text-align: left; font-size: 12px; color: #666; text-transform: uppercase; letter-spacing: .5px; padding: 0 8px; }
-    td { background: #fbfaf8; border-top: 1px solid #eee9e1; border-bottom: 1px solid #eee9e1; padding: 10px 8px; vertical-align: middle; }
-    td:first-child { border-left: 1px solid #eee9e1; border-radius: 14px 0 0 14px; }
-    td:last-child { border-right: 1px solid #eee9e1; border-radius: 0 14px 14px 0; }
-    .thumb-preview { width: 54px; height: 54px; border-radius: 12px; object-fit: cover; background: #eee; display: block; }
-    .small-input { min-width: 190px; }
-    .name-input { min-width: 260px; }
-    .url-input { min-width: 320px; }
-    .row-actions { display: flex; gap: 6px; }
-    .mini-btn { padding: 9px 11px; border-radius: 10px; font-size: 12px; }
-    .hidden { display: none; }
-    .notice { background: #f0ebff; border: 1px solid #ddd2ff; color: #34205c; border-radius: 14px; padding: 14px 16px; line-height: 1.45; margin-bottom: 18px; }
-    @media (max-width: 760px) { .topbar { align-items: flex-start; flex-direction: column; } .grid { grid-template-columns: 1fr; } h1 { font-size: 24px; } }
+    th { text-align: left; font-size: 12px; letter-spacing: .6px; text-transform: uppercase; color: #555; padding: 0 8px; }
+    td { background: #fff; border-top: 1px solid #e8e2d8; border-bottom: 1px solid #e8e2d8; padding: 10px 8px; vertical-align: middle; }
+    td:first-child { border-left: 1px solid #e8e2d8; border-radius: 14px 0 0 14px; }
+    td:last-child { border-right: 1px solid #e8e2d8; border-radius: 0 14px 14px 0; }
+    .thumb { width: 64px; height: 64px; object-fit: cover; border-radius: 10px; border: 1px solid #eee; background: #f1f1f1; display:block; }
+    .placeholder { width: 64px; height: 64px; display:flex; align-items:center; justify-content:center; border-radius:10px; background:#efefef; color:#777; font-weight:800; }
+    .small-btn { padding: 9px 12px; font-size: 12px; }
+    .count { color: #666; font-size: 13px; margin-bottom: 10px; }
+    @media (max-width: 760px) { .topbar { align-items:flex-start; flex-direction:column; } .grid { grid-template-columns: 1fr; } .page { width: min(100% - 24px, 1220px); margin: 18px auto; } h1 { font-size: 25px; } .brand img { width:72px; height:72px; } }
   </style>
 </head>
 <body>
   <main class="page">
     <header class="topbar">
-      <div class="brand">
-        <img src="logo-site-catalogo.jpg" alt="Keyato Profissionais" />
-        <div>
-          <h1>Admin Biblioteca SketchUp</h1>
-          <p class="subtitle">Cadastre produtos, links do Google Drive e miniaturas. Depois gere o <strong>sketchup.html</strong> pronto para subir no GitHub.</p>
-        </div>
-      </div>
-      <a class="btn light" href="index.html">Ver catálogo</a>
+      <div class="brand"><img src="logo-site-catalogo.jpg" alt="Keyato Profissionais"><div><h1>Admin Biblioteca SketchUp</h1><div class="subtitle">Cadastre produtos, links do Google Drive e miniaturas. Depois gere o <strong>sketchup.html</strong> pronto para subir no GitHub.</div></div></div>
+      <a class="pill-link" href="index.html" target="_blank" rel="noopener noreferrer">Ver catálogo</a>
     </header>
-
-    <div class="notice">
-      <strong>Como usar:</strong> preencha ou edite os produtos, informe o caminho da miniatura no GitHub, por exemplo <strong>sketchup_miniaturas/zp4301-allen-160.jpg</strong>, e clique em <strong>Gerar sketchup.html</strong>. Esta página salva automaticamente um rascunho no seu navegador.
-    </div>
-
-    <section class="panel">
-      <div class="grid">
-        <div>
-          <label>Link do arquivo .RAR com todos os SketchUps</label>
-          <input id="rarLink" type="url" placeholder="https://drive.google.com/..." />
-        </div>
-        <div>
-          <label>Caminho da logo</label>
-          <input id="logoPath" type="text" value="logo-site-catalogo.jpg" />
-        </div>
-      </div>
-      <div class="actions">
-        <button class="primary" id="addProduct">+ Adicionar produto</button>
-        <button class="dark" id="generateHtml">Gerar sketchup.html</button>
-        <button class="light" id="exportJson">Exportar backup JSON</button>
-        <label class="btn light" for="importJson">Importar backup JSON</label>
-        <input class="hidden" id="importJson" type="file" accept="application/json" />
-        <button class="danger" id="clearDraft">Limpar rascunho local</button>
-      </div>
-      <p class="muted">Dica: para a busca funcionar bem, mantenha código e nome no campo “Nome do produto”. A busca final ignora acentos, então Órion e Orion trazem o mesmo resultado.</p>
+    <section class="notice"><strong>Como usar:</strong> preencha ou edite os produtos, informe o caminho da miniatura no GitHub, por exemplo <strong>sketchup_miniaturas/zp4301-allen-160.jpg</strong>, e clique em <strong>Gerar sketchup.html</strong>. Esta página salva automaticamente um rascunho no seu navegador.</section>
+    <section class="card">
+      <div class="grid"><div><label for="rarLink">Link do arquivo .RAR com todos os SketchUps</label><input id="rarLink" placeholder="https://drive.google.com/..." /></div><div><label for="logoPath">Caminho da logo</label><input id="logoPath" value="logo-site-catalogo.jpg" /></div></div>
+      <div class="actions"><button class="primary" id="addProduct" type="button">+ Adicionar produto</button><button class="dark" id="generateHtml" type="button">Gerar sketchup.html</button><button class="ghost" id="exportJson" type="button">Exportar backup JSON</button><label class="button ghost" for="importJson">Importar backup JSON</label><input id="importJson" type="file" accept="application/json" style="display:none" /><button class="danger" id="clearLocal" type="button">Limpar rascunho local</button></div>
+      <div class="hint">Dica: a busca final ignora acentos. Então Órion e Orion trazem o mesmo resultado.</div>
     </section>
-
-    <section class="panel">
-      <div class="toolbar">
-        <input class="search" id="adminSearch" type="search" placeholder="Buscar produto no admin..." />
-        <span class="muted" id="totalInfo"></span>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr><th>Miniatura</th><th>Nome do produto</th><th>Arquivo</th><th>Link SketchUp</th><th>Imagem</th><th>Ações</th></tr>
-          </thead>
-          <tbody id="tbody"></tbody>
-        </table>
-      </div>
-    </section>
+    <section class="card"><input class="search-admin" id="adminSearch" placeholder="Buscar produto no admin..." /><div class="count" id="adminCount"></div><div class="table-wrap"><table><thead><tr><th>Miniatura</th><th>Nome do produto</th><th>Arquivo</th><th>Link SketchUp</th><th>Imagem</th><th>Ações</th></tr></thead><tbody id="tbody"></tbody></table></div></section>
   </main>
-
   <script>
     const dadosIniciais = [
   {
@@ -649,90 +605,59 @@
   }
 ];
     const rarInicial = "https://drive.google.com/uc?export=download&id=1gvGPDKkhbPrU2mFyhGL7Nr05Ku4T8wkw";
-    const storageKey = "keyato_admin_sketchup_v1";
+    const STORAGE_KEY = "keyatoSketchupAdminV3";
     let produtos = [];
-
-    function normalizar(texto) {
-      return (texto || "").toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/º/g, "o");
-    }
-    function carregar() {
-      const salvo = localStorage.getItem(storageKey);
-      if (salvo) {
-        try {
-          const dados = JSON.parse(salvo);
-          produtos = dados.produtos || dadosIniciais;
-          document.getElementById("rarLink").value = dados.rarLink || rarInicial;
-          document.getElementById("logoPath").value = dados.logoPath || "logo-site-catalogo.jpg";
-          return;
-        } catch(e) {}
-      }
-      produtos = dadosIniciais;
-      document.getElementById("rarLink").value = rarInicial;
-      document.getElementById("logoPath").value = "logo-site-catalogo.jpg";
-    }
-    function salvar() {
-      localStorage.setItem(storageKey, JSON.stringify({ produtos, rarLink: document.getElementById("rarLink").value.trim(), logoPath: document.getElementById("logoPath").value.trim() }));
-    }
-    function escapeHtml(texto) {
-      return (texto || "").replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
-    }
+    const tbody = document.getElementById("tbody");
+    const rarLinkInput = document.getElementById("rarLink");
+    const logoPathInput = document.getElementById("logoPath");
+    const adminSearch = document.getElementById("adminSearch");
+    const adminCount = document.getElementById("adminCount");
+    function normalizar(texto) { return (texto || "").toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/º/g, "o"); }
+    function escaparHtml(texto) { return (texto || "").toString().replace(/[&<>'"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c])); }
+    function driveDownload(url) { const texto = (url || "").trim(); const match = texto.match(/\/d\/([^/]+)/); if (match) return "https://drive.google.com/uc?export=download&id=" + match[1]; return texto; }
+    function salvar() { localStorage.setItem(STORAGE_KEY, JSON.stringify({ produtos, rarLink: rarLinkInput.value, logoPath: logoPathInput.value })); }
+    function carregar() { const salvo = localStorage.getItem(STORAGE_KEY); if (salvo) { try { const dados = JSON.parse(salvo); produtos = Array.isArray(dados.produtos) ? dados.produtos : dadosIniciais; rarLinkInput.value = dados.rarLink || rarInicial || ""; logoPathInput.value = dados.logoPath || "logo-site-catalogo.jpg"; return; } catch(e) {} } produtos = dadosIniciais; rarLinkInput.value = rarInicial || ""; logoPathInput.value = "logo-site-catalogo.jpg"; }
     function render() {
-      const termo = normalizar(document.getElementById("adminSearch").value);
-      const tbody = document.getElementById("tbody");
-      const filtrados = produtos.map((p, index) => ({ ...p, index })).filter(p => normalizar([p.nome, p.arquivo, p.link, p.imagem].join(" ")).includes(termo));
+      const termo = normalizar(adminSearch.value);
+      const filtrados = produtos.map((p, i) => ({...p, index: i})).filter(p => normalizar(p.nome + " " + p.arquivo + " " + p.link + " " + p.imagem).includes(termo));
+      adminCount.textContent = `${filtrados.length} de ${produtos.length} produtos`;
       tbody.innerHTML = filtrados.map(p => `
         <tr>
-          <td>${p.imagem ? `<img class="thumb-preview" src="${escapeHtml(p.imagem)}" alt="">` : `<div class="thumb-preview"></div>`}</td>
-          <td><input class="name-input" value="${escapeHtml(p.nome)}" data-index="${p.index}" data-field="nome"></td>
-          <td><input class="small-input" value="${escapeHtml(p.arquivo)}" data-index="${p.index}" data-field="arquivo"></td>
-          <td><input class="url-input" value="${escapeHtml(p.link)}" data-index="${p.index}" data-field="link"></td>
-          <td><input class="small-input" value="${escapeHtml(p.imagem || "")}" placeholder="sketchup_miniaturas/arquivo.jpg" data-index="${p.index}" data-field="imagem"></td>
-          <td><div class="row-actions"><button class="mini-btn light" data-action="duplicate" data-index="${p.index}">Duplicar</button><button class="mini-btn danger" data-action="delete" data-index="${p.index}">Excluir</button></div></td>
+          <td>${p.imagem ? `<img class="thumb" src="${escaparHtml(p.imagem)}" onerror="this.outerHTML='<div class=&quot;placeholder&quot;>3D</div>'" />` : `<div class="placeholder">3D</div>`}</td>
+          <td><input value="${escaparHtml(p.nome)}" data-index="${p.index}" data-field="nome" /></td>
+          <td><input value="${escaparHtml(p.arquivo)}" data-index="${p.index}" data-field="arquivo" /></td>
+          <td><input value="${escaparHtml(p.link)}" data-index="${p.index}" data-field="link" /></td>
+          <td><input value="${escaparHtml(p.imagem)}" data-index="${p.index}" data-field="imagem" placeholder="sketchup_miniaturas/arquivo.jpg" /></td>
+          <td><button class="danger small-btn" type="button" data-remove="${p.index}">Remover</button></td>
         </tr>`).join("");
-      document.getElementById("totalInfo").textContent = `${filtrados.length} de ${produtos.length} produtos`;
     }
-    document.addEventListener("input", e => {
-      const el = e.target;
-      if (el.matches("input[data-field]")) { const idx = Number(el.dataset.index); produtos[idx][el.dataset.field] = el.value; salvar(); }
-      if (el.id === "adminSearch") render();
-      if (el.id === "rarLink" || el.id === "logoPath") salvar();
-    });
-    document.addEventListener("click", e => {
-      const btn = e.target.closest("button"); if (!btn) return;
-      const action = btn.dataset.action; const idx = Number(btn.dataset.index);
-      if (action === "delete") { if (confirm("Excluir este produto?")) { produtos.splice(idx, 1); salvar(); render(); } }
-      if (action === "duplicate") { produtos.splice(idx + 1, 0, {...produtos[idx], nome: produtos[idx].nome + " cópia"}); salvar(); render(); }
-    });
-    document.getElementById("addProduct").addEventListener("click", () => { produtos.unshift({ nome: "", arquivo: "", link: "", imagem: "" }); salvar(); render(); window.scrollTo({ top: 0, behavior: "smooth" }); });
-    document.getElementById("clearDraft").addEventListener("click", () => { if (confirm("Isso apagará o rascunho salvo neste navegador. Continuar?")) { localStorage.removeItem(storageKey); carregar(); render(); } });
-    document.getElementById("exportJson").addEventListener("click", () => {
-      const data = JSON.stringify({ produtos, rarLink: document.getElementById("rarLink").value.trim(), logoPath: document.getElementById("logoPath").value.trim() }, null, 2);
-      baixarArquivo("backup-sketchup-keyato.json", data, "application/json");
-    });
-    document.getElementById("importJson").addEventListener("change", e => {
-      const file = e.target.files[0]; if (!file) return;
-      const reader = new FileReader();
-      reader.onload = () => { try { const dados = JSON.parse(reader.result); produtos = dados.produtos || []; document.getElementById("rarLink").value = dados.rarLink || ""; document.getElementById("logoPath").value = dados.logoPath || "logo-site-catalogo.jpg"; salvar(); render(); } catch(err) { alert("Arquivo JSON inválido."); } };
-      reader.readAsText(file);
-    });
-    function escapeForTemplate(texto) { return String(texto || "").replace(/`/g, "\\`").replace(/\\/g, "\\\\").replace(/\$/g, "\\$"); }
+    tbody.addEventListener("input", e => { const index = e.target.dataset.index; const field = e.target.dataset.field; if (index !== undefined && field) { produtos[Number(index)][field] = e.target.value; salvar(); } });
+    tbody.addEventListener("click", e => { const index = e.target.dataset.remove; if (index !== undefined && confirm("Remover este produto?")) { produtos.splice(Number(index), 1); salvar(); render(); } });
+    adminSearch.addEventListener("input", render); rarLinkInput.addEventListener("input", salvar); logoPathInput.addEventListener("input", salvar);
+    document.getElementById("addProduct").addEventListener("click", () => { produtos.unshift({nome:"", arquivo:"", link:"", imagem:""}); salvar(); adminSearch.value = ""; render(); window.scrollTo({top: 0, behavior: "smooth"}); });
+    document.getElementById("clearLocal").addEventListener("click", () => { if (confirm("Isso apaga apenas o rascunho salvo neste navegador. Continuar?")) { localStorage.removeItem(STORAGE_KEY); carregar(); render(); } });
+    document.getElementById("exportJson").addEventListener("click", () => { salvar(); baixarArquivo("backup-biblioteca-sketchup.json", localStorage.getItem(STORAGE_KEY), "application/json;charset=utf-8"); });
+    document.getElementById("importJson").addEventListener("change", e => { const file = e.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = () => { try { const dados = JSON.parse(reader.result); produtos = Array.isArray(dados.produtos) ? dados.produtos : []; rarLinkInput.value = dados.rarLink || ""; logoPathInput.value = dados.logoPath || "logo-site-catalogo.jpg"; salvar(); render(); } catch(err) { alert("Arquivo JSON inválido."); } }; reader.readAsText(file); });
     function gerarSketchupHtml() {
-      const lista = produtos.map(p => ({ nome: (p.nome || "").trim(), arquivo: (p.arquivo || "").trim(), link: (p.link || "").trim(), imagem: (p.imagem || "").trim() })).filter(p => p.nome && p.link);
-      const rarLink = document.getElementById("rarLink").value.trim();
-      const logoPath = document.getElementById("logoPath").value.trim() || "logo-site-catalogo.jpg";
+      const lista = produtos.map(p => ({ nome: (p.nome || "").trim(), arquivo: (p.arquivo || "").trim(), link: driveDownload(p.link || ""), imagem: (p.imagem || "").trim() })).filter(p => p.nome && p.link);
+      const rarLink = driveDownload(rarLinkInput.value || "");
+      const logoPath = logoPathInput.value || "logo-site-catalogo.jpg";
+      const listaJson = JSON.stringify(lista, null, 2).replace(/<\//g, "<\\/");
+      const rarEsc = escaparHtml(rarLink);
+      const logoEsc = escaparHtml(logoPath);
       return `<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Biblioteca SketchUp | Keyato Profissionais</title>
+  <title>Biblioteca SketchUp Keyato</title>
   <style>
     * { box-sizing: border-box; }
-    body { margin: 0; min-height: 100vh; background: #f5f5f3; color: #1f1f1f; font-family: Arial, sans-serif; }
-    .page { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 36px 0 48px; }
-    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-bottom: 28px; }
-    .brand { display: flex; align-items: center; gap: 16px; }
-    .brand img { width: 86px; height: auto; display: block; box-shadow: 0 6px 18px rgba(0,0,0,0.12); }
+    body { margin: 0; font-family: Arial, sans-serif; background: #f7f6f3; color: #111; }
+    .page { width: min(1120px, calc(100% - 40px)); margin: 32px auto; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; gap: 20px; margin-bottom: 24px; }
+    .brand { display: flex; align-items: center; gap: 18px; }
+    .brand img { width: 86px; height: 86px; object-fit: cover; box-shadow: 0 8px 22px rgba(0,0,0,.12); }
     .brand-text small { display: block; font-size: 12px; letter-spacing: 1.6px; text-transform: uppercase; color: #777; font-weight: 700; margin-bottom: 4px; }
     h1 { margin: 0; font-size: 32px; line-height: 1.1; }
     .back { display: inline-flex; align-items: center; gap: 10px; padding: 13px 20px; border-radius: 999px; background: linear-gradient(135deg, #2d2d2d, #111); color: #fff; text-decoration: none; font-size: 14px; font-weight: 700; box-shadow: 0 12px 26px rgba(0,0,0,0.20), inset 0 1px 0 rgba(255,255,255,0.12); transition: all .25s ease; }
@@ -758,56 +683,22 @@
 </head>
 <body>
   <main class="page">
-    <header class="topbar">
-      <div class="brand">
-        <img src="${escapeForTemplate(logoPath)}" alt="Keyato Profissionais" />
-        <div class="brand-text"><small>Biblioteca</small><h1>Arquivos SketchUp</h1></div>
-      </div>
-      <a class="back" href="index.html">← Voltar ao catálogo</a>
-    </header>
-    <section class="intro">
-      <p>Baixe os arquivos SketchUp dos puxadores disponíveis neste catálogo.</p>
-      <p>Faça a busca por código ou nome do produto.</p>
-      <div class="tools">
-        <input class="search" id="search" type="search" placeholder="Buscar por código ou nome do produto..." autocomplete="off" />
-        ${rarLink ? `<a class="download-all" href="${escapeForTemplate(rarLink)}" target="_blank" rel="noopener noreferrer">Baixar todos (.RAR)</a>` : ``}
-      </div>
-    </section>
-    <div class="meta"><span id="count"></span><span>Busca sem diferenciação de acentos</span></div>
-    <section class="list" id="list"></section>
-    <div class="empty" id="empty">Nenhum arquivo encontrado.</div>
+    <header class="topbar"><div class="brand"><img src="${logoEsc}" alt="Keyato Profissionais" /><div class="brand-text"><small>Biblioteca</small><h1>Arquivos SketchUp</h1></div></div><a class="back" href="index.html">← Voltar ao catálogo</a></header>
+    <section class="intro"><p>Baixe os arquivos SketchUp dos puxadores disponíveis neste catálogo.</p><p>Faça a busca por código ou nome do produto.</p><div class="tools"><input class="search" id="search" type="search" placeholder="Buscar por código ou nome do produto..." autocomplete="off" />${rarEsc ? `<a class="download-all" href="${rarEsc}" target="_blank" rel="noopener noreferrer">Baixar todos (.RAR)</a>` : ``}</div></section>
+    <div class="meta"><span id="count"></span><span>Busca sem diferenciação de acentos</span></div><section class="list" id="list"></section><div class="empty" id="empty">Nenhum arquivo encontrado.</div>
   </main>
   <script>
-    const arquivos = ${JSON.stringify(lista, null, 2)};
-    const list = document.getElementById("list");
-    const search = document.getElementById("search");
-    const count = document.getElementById("count");
-    const empty = document.getElementById("empty");
+    const arquivos = ${listaJson};
+    const list = document.getElementById("list"); const search = document.getElementById("search"); const count = document.getElementById("count"); const empty = document.getElementById("empty");
     function normalizar(texto) { return (texto || "").toString().toLowerCase().normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").replace(/º/g, "o"); }
     function esc(texto) { return (texto || "").replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
-    function renderizar() {
-      const termo = normalizar(search.value.trim());
-      const filtrados = arquivos.filter(item => normalizar(item.nome + " " + item.arquivo).includes(termo));
-      list.innerHTML = filtrados.map(item => `
-        <article class="item">
-          ${item.imagem ? `<img class="thumb" src="${esc(item.imagem)}" alt="${esc(item.nome)}" onerror="this.outerHTML='<div class=&quot;thumb-placeholder&quot;>3D</div>'">` : `<div class="thumb-placeholder">3D</div>`}
-          <div><div class="item-name">${esc(item.nome)}</div><div class="item-file">${esc(item.arquivo)}</div></div>
-          <a class="btn" href="${esc(item.link)}" target="_blank" rel="noopener noreferrer">Baixar SketchUp</a>
-        </article>`).join("");
-      count.textContent = `${filtrados.length} de ${arquivos.length} arquivos`;
-      empty.style.display = filtrados.length ? "none" : "block";
-    }
+    function renderizar() { const termo = normalizar(search.value.trim()); const filtrados = arquivos.filter(item => normalizar(item.nome + " " + item.arquivo).includes(termo)); list.innerHTML = filtrados.map(item => `<article class="item">${item.imagem ? `<img class="thumb" src="${esc(item.imagem)}" alt="${esc(item.nome)}" onerror="this.outerHTML='<div class=&quot;thumb-placeholder&quot;>3D</div>'">` : `<div class="thumb-placeholder">3D</div>`}<div><div class="item-name">${esc(item.nome)}</div><div class="item-file">${esc(item.arquivo)}</div></div><a class="btn" href="${esc(item.link)}" target="_blank" rel="noopener noreferrer">Baixar SketchUp</a></article>`).join(""); count.textContent = `${filtrados.length} de ${arquivos.length} arquivos`; empty.style.display = filtrados.length ? "none" : "block"; }
     search.addEventListener("input", renderizar); renderizar();
-  </script>
+  <\/script>
 </body>
 </html>`;
     }
-    function baixarArquivo(nome, conteudo, tipo) {
-      const blob = new Blob([conteudo], { type: tipo });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url; a.download = nome; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-    }
+    function baixarArquivo(nome, conteudo, tipo) { const blob = new Blob([conteudo], { type: tipo }); const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = nome; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); }
     document.getElementById("generateHtml").addEventListener("click", () => { salvar(); baixarArquivo("sketchup.html", gerarSketchupHtml(), "text/html;charset=utf-8"); });
     carregar(); render();
   </script>
