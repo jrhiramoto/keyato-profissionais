@@ -23,8 +23,13 @@
     .primary { background: linear-gradient(135deg, #5d1bc4, #32116e); color: #fff; box-shadow: 0 10px 25px rgba(93,27,196,.22); }
     .dark { background: linear-gradient(135deg, #2d2d2d, #111); color: #fff; }
     .light { background: #fff; border: 1px solid #ddd8cf; color: #222; }
+    .success { background: #ecfdf3; color: #067647; border: 1px solid #abefc6; }
     .danger { background: #fff1f1; color: #b42318; border: 1px solid #ffd0d0; }
     .muted { color: #777; font-size: 13px; }
+    .status-line { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 12px; font-size: 13px; color: #666; }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #98a2b3; display: inline-block; }
+    .status-line.dirty .status-dot { background: #f79009; }
+    .status-line.saved .status-dot { background: #12b76a; }
     .toolbar { display: flex; gap: 12px; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
     .search { flex: 1; min-width: 260px; }
     .products { display: grid; gap: 12px; }
@@ -32,7 +37,7 @@
     .thumb-preview { width: 58px; height: 58px; border-radius: 12px; object-fit: cover; background: #eee; display: block; }
     .thumb-placeholder { width: 58px; height: 58px; border-radius: 12px; background: #eee; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; color:#777; }
     .thumb-cell { display:flex; align-items:center; justify-content:center; }
-    .product-fields { display:grid; gap: 10px; }
+    .product-fields { display:grid; gap: 10px; min-width: 0; }
     .product-line-1 { display:grid; grid-template-columns: 1fr 1.35fr; gap: 10px; }
     .product-line-2 { display:grid; grid-template-columns: 1fr auto; gap: 10px; align-items:end; }
     .field-title { font-size: 11px; font-weight: 800; color:#666; text-transform: uppercase; letter-spacing: .45px; margin-bottom: 5px; }
@@ -42,8 +47,7 @@
     .delete-btn:hover { background: #ffe4e4; }
     .hidden { display: none; }
     .notice { background: #f0ebff; border: 1px solid #ddd2ff; color: #34205c; border-radius: 14px; padding: 14px 16px; line-height: 1.45; margin-bottom: 18px; }
-    @media (max-width: 860px) { .product-line-1, .product-line-2 { grid-template-columns: 1fr; } .row-actions { justify-content:flex-start; } }
-    @media (max-width: 760px) { .topbar { align-items: flex-start; flex-direction: column; } .grid { grid-template-columns: 1fr; } h1 { font-size: 24px; } .product-card { grid-template-columns: 1fr; } .thumb-cell { justify-content:flex-start; } }
+    @media (max-width: 760px) { .topbar { align-items: flex-start; flex-direction: column; } .grid { grid-template-columns: 1fr; } h1 { font-size: 24px; } .product-card { grid-template-columns: 1fr; } .thumb-cell { justify-content:flex-start; } .product-line-1, .product-line-2 { grid-template-columns: 1fr; } .row-actions { justify-content:flex-start; } }
   </style>
 </head>
 <body>
@@ -71,12 +75,14 @@
       <div class="actions">
         <button class="primary" id="addProduct">+ Adicionar produto</button>
         <button class="dark" id="generateHtml">Gerar sketchup.html</button>
+        <button class="success" id="saveChanges">💾 Salvar alterações</button>
         <button class="light" id="exportJson">Exportar backup JSON</button>
         <label class="btn light" for="importJson">Importar backup JSON</label>
         <input class="hidden" id="importJson" type="file" accept="application/json" />
         <button class="danger" id="clearDraft">Limpar rascunho local</button>
       </div>
       <p class="muted">Dica: para a busca funcionar bem, mantenha código e nome no campo “Nome do produto”. A busca final ignora acentos, então Órion e Orion trazem o mesmo resultado.</p>
+      <div class="status-line saved" id="saveStatus"><span class="status-dot"></span><span>Rascunho local salvo automaticamente.</span></div>
     </section>
 
     <section class="panel">
@@ -546,9 +552,34 @@
     const SEED_RAR_LINK = "https://drive.google.com/file/d/1gvGPDKkhbPrU2mFyhGL7Nr05Ku4T8wkw/view?usp=drive_link";
     const STORAGE_KEY = "keyato_sketchup_admin_v3";
     let produtos = [];
+    let temAlteracoesPendentes = false;
 
     function normalizar(texto) { return (texto || "").toString().toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/º/g, "o"); }
     function esc(texto) { return (texto || "").toString().replace(/[&<>'"]/g, function(c) { return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]; }); }
+    function escAttr(texto) { return esc(texto).replace(/`/g, '&#96;'); }
+
+    function atualizarStatus(texto, tipo) {
+      const el = document.getElementById("saveStatus");
+      if (!el) return;
+      el.className = "status-line " + (tipo || "saved");
+      el.querySelector("span:last-child").textContent = texto;
+    }
+
+    function marcarAlteracao() {
+      temAlteracoesPendentes = true;
+      atualizarStatus("Alterações salvas como rascunho no navegador. Gere o sketchup.html para publicar no site.", "dirty");
+    }
+
+    function dadosAtuais() {
+      return {
+        rarLink: document.getElementById("rarLink").value.trim(),
+        logoPath: document.getElementById("logoPath").value.trim(),
+        produtos: produtos
+      };
+    }
+
+    function salvarRascunhoLocal() { localStorage.setItem(STORAGE_KEY, JSON.stringify(dadosAtuais())); }
+    function salvar() { salvarRascunhoLocal(); marcarAlteracao(); }
 
     function carregar() {
       const salvo = localStorage.getItem(STORAGE_KEY);
@@ -559,6 +590,7 @@
             produtos = dados.produtos.map(function(p) { return { nome: p.nome || "", link: p.link || "", imagem: p.imagem || "" }; });
             document.getElementById("rarLink").value = dados.rarLink || SEED_RAR_LINK;
             document.getElementById("logoPath").value = dados.logoPath || "logo-site-catalogo.jpg";
+            atualizarStatus("Rascunho local carregado automaticamente.", "saved");
             return;
           }
         } catch (e) {}
@@ -566,35 +598,26 @@
       produtos = SEED_PRODUCTS.map(function(item) { return Object.assign({}, item); });
       document.getElementById("rarLink").value = SEED_RAR_LINK;
       document.getElementById("logoPath").value = "logo-site-catalogo.jpg";
-      salvar();
-    }
-
-    function salvar() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        rarLink: document.getElementById("rarLink").value.trim(),
-        logoPath: document.getElementById("logoPath").value.trim(),
-        produtos: produtos
-      }));
+      salvarRascunhoLocal();
+      atualizarStatus("Produtos iniciais carregados e rascunho local criado.", "saved");
     }
 
     function render() {
       const rows = document.getElementById("productRows");
       const termo = normalizar(document.getElementById("adminSearch").value);
-      const filtrados = produtos.map(function(p, index) { return Object.assign({index:index}, p); }).filter(function(p) {
-        return normalizar(p.nome + " " + p.link + " " + p.imagem).includes(termo);
-      });
+      const filtrados = produtos.map(function(p, index) { return Object.assign({index:index}, p); }).filter(function(p) { return normalizar(p.nome + " " + p.link + " " + p.imagem).includes(termo); });
       document.getElementById("productCount").textContent = filtrados.length + " de " + produtos.length + " produtos";
       rows.innerHTML = filtrados.map(function(p) {
-        const thumb = p.imagem ? '<img class="thumb-preview" src="' + esc(p.imagem) + '" alt="Miniatura">' : '<div class="thumb-placeholder">3D</div>';
+        const thumb = p.imagem ? '<img class="thumb-preview" src="' + escAttr(p.imagem) + '" alt="Miniatura">' : '<div class="thumb-placeholder">3D</div>';
         return '<article class="product-card">' +
           '<div class="thumb-cell">' + thumb + '</div>' +
           '<div class="product-fields">' +
             '<div class="product-line-1">' +
-              '<div><div class="field-title">Nome do produto</div><input value="' + esc(p.nome) + '" data-field="nome" data-index="' + p.index + '"></div>' +
-              '<div><div class="field-title">Link SketchUp</div><input value="' + esc(p.link || '') + '" data-field="link" data-index="' + p.index + '"></div>' +
+              '<div><div class="field-title">Nome do produto</div><input value="' + escAttr(p.nome) + '" data-field="nome" data-index="' + p.index + '"></div>' +
+              '<div><div class="field-title">Link SketchUp</div><input value="' + escAttr(p.link || '') + '" data-field="link" data-index="' + p.index + '"></div>' +
             '</div>' +
             '<div class="product-line-2">' +
-              '<div><div class="field-title">Imagem</div><input value="' + esc(p.imagem || '') + '" placeholder="sketchup_miniaturas/nome.jpg" data-field="imagem" data-index="' + p.index + '"></div>' +
+              '<div><div class="field-title">Imagem</div><input value="' + escAttr(p.imagem || '') + '" placeholder="sketchup_miniaturas/nome.jpg" data-field="imagem" data-index="' + p.index + '"></div>' +
               '<div class="row-actions"><button class="mini-btn light" data-action="duplicate" data-index="' + p.index + '">Duplicar</button><button class="mini-btn delete-btn" data-action="delete" data-index="' + p.index + '">Excluir</button></div>' +
             '</div>' +
           '</div>' +
@@ -605,46 +628,42 @@
     function adicionarProduto() { produtos.unshift({ nome: "Novo produto", link: "", imagem: "" }); salvar(); render(); }
 
     function gerarSketchupHtml() {
-      salvar();
+      salvarRascunhoLocal();
       const logo = document.getElementById("logoPath").value.trim() || "logo-site-catalogo.jpg";
       const rarLink = document.getElementById("rarLink").value.trim();
-      const publicData = produtos.filter(function(p) { return p.nome && p.link; }).map(function(p) {
-        return { nome: p.nome, link: p.link, imagem: p.imagem || "" };
-      });
+      const publicData = produtos.filter(function(p) { return p.nome && p.link; }).map(function(p) { return { nome: p.nome, link: p.link, imagem: p.imagem || "" }; });
       const jsonData = JSON.stringify(publicData, null, 2).replace(/<\//g, '<\/');
-      const parts = [];
-      parts.push('<!DOCTYPE html>');
-      parts.push('<html lang="pt-BR">');
-      parts.push('<head>');
-      parts.push('<meta charset="UTF-8" />');
-      parts.push('<meta name="viewport" content="width=device-width, initial-scale=1.0" />');
-      parts.push('<title>Biblioteca SketchUp | Keyato</title>');
-      parts.push('<style>');
-      parts.push('*{box-sizing:border-box}body{margin:0;background:#f5f5f3;color:#1f1f1f;font-family:Arial,sans-serif}.page{width:min(1180px,calc(100% - 32px));margin:0 auto;padding:34px 0 52px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:28px}.brand{display:flex;align-items:center;gap:16px}.brand img{width:88px;display:block;box-shadow:0 6px 18px rgba(0,0,0,.12)}h1{margin:0 0 8px;font-size:32px}.subtitle{margin:0;color:#666;line-height:1.45}.btn-top{border-radius:999px;padding:13px 20px;text-decoration:none;color:#fff;font-weight:800;background:linear-gradient(135deg,#2d2d2d,#111);box-shadow:0 12px 26px rgba(0,0,0,.18)}.hero{background:#fff;border:1px solid #e5e2dc;border-radius:22px;padding:22px;box-shadow:0 10px 30px rgba(0,0,0,.06);margin-bottom:18px}.search{width:100%;border:1px solid #ddd8cf;border-radius:16px;padding:15px 16px;font-size:15px;outline:none}.search:focus{border-color:#5d1bc4;box-shadow:0 0 0 3px rgba(93,27,196,.10)}.actions{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px}.download-all{border-radius:999px;padding:13px 20px;text-decoration:none;color:#fff;font-weight:800;background:linear-gradient(135deg,#5d1bc4,#32116e);box-shadow:0 12px 26px rgba(93,27,196,.22)}.meta{color:#777;font-size:13px}.list{display:grid;gap:12px}.item{display:grid;grid-template-columns:72px 1fr auto;gap:16px;align-items:center;background:#fff;border:1px solid #e5e2dc;border-radius:18px;padding:12px;box-shadow:0 8px 22px rgba(0,0,0,.045)}.thumb{width:72px;height:72px;border-radius:14px;object-fit:cover;background:#eee}.thumb-placeholder{width:72px;height:72px;border-radius:14px;background:#eee;display:flex;align-items:center;justify-content:center;color:#777;font-weight:800}.item-name{font-weight:800}.download{border-radius:999px;padding:11px 16px;text-decoration:none;background:#111;color:#fff;font-weight:800;white-space:nowrap}.empty{display:none;text-align:center;padding:24px;color:#777}@media(max-width:760px){.topbar{align-items:flex-start;flex-direction:column}h1{font-size:26px}.item{grid-template-columns:58px 1fr}.thumb,.thumb-placeholder{width:58px;height:58px}.download{grid-column:1/-1;text-align:center}}');
-      parts.push('</style>');
-      parts.push('</head><body>');
-      parts.push('<main class="page">');
-      parts.push('<header class="topbar"><div class="brand"><img src="' + esc(logo) + '" alt="Keyato Profissionais" /><div><h1>Biblioteca SketchUp</h1><p class="subtitle">Baixe os arquivos SketchUp dos puxadores disponíveis neste catálogo.<br>Faça a busca por código ou nome do produto.</p></div></div><a class="btn-top" href="index.html">Voltar ao catálogo</a></header>');
-      parts.push('<section class="hero"><input class="search" id="search" type="search" placeholder="Buscar por código ou nome do produto..." /><div class="actions"><span class="meta" id="count"></span><a class="download-all" href="' + esc(rarLink) + '" target="_blank" rel="noopener noreferrer">Baixar todos os arquivos</a></div></section>');
-      parts.push('<section class="list" id="list"></section><div class="empty" id="empty">Nenhum arquivo encontrado.</div>');
-      parts.push('</main>');
-      parts.push('<script>');
-      parts.push('const arquivos = ' + jsonData + ';');
-      parts.push('const list=document.getElementById("list"),search=document.getElementById("search"),count=document.getElementById("count"),empty=document.getElementById("empty");');
-      parts.push('function normalizar(texto){return (texto||"").toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/º/g,"o")}');
-      parts.push(`function escHtml(texto){return (texto||"").toString().replace(/[&<>\'"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\'":"&#39;","\"":"&quot;"}[c]})}`);
-      parts.push(`function renderizar(){const termo=normalizar(search.value.trim());const filtrados=arquivos.filter(function(item){return normalizar(item.nome).includes(termo)});list.innerHTML=filtrados.map(function(item){const img=item.imagem?'<img class="thumb" src="'+escHtml(item.imagem)+'" alt="'+escHtml(item.nome)+'">':'<div class="thumb-placeholder">3D</div>';return '<article class="item">'+img+'<div><div class="item-name">'+escHtml(item.nome)+'</div></div><a class="download" href="'+escHtml(item.link)+'" target="_blank" rel="noopener noreferrer">Baixar SketchUp</a></article>'}).join("");count.textContent=filtrados.length+" de "+arquivos.length+" arquivos";empty.style.display=filtrados.length?"none":"block"}`);
-      parts.push('search.addEventListener("input",renderizar);renderizar();');
-      parts.push('<\/script>');
-      parts.push('</body></html>');
-      return parts.join('\n');
+      const css = '*{box-sizing:border-box}body{margin:0;background:#f5f5f3;color:#1f1f1f;font-family:Arial,sans-serif}.page{width:min(1180px,calc(100% - 32px));margin:0 auto;padding:34px 0 52px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:28px}.brand{display:flex;align-items:center;gap:16px}.brand img{width:88px;display:block;box-shadow:0 6px 18px rgba(0,0,0,.12)}h1{margin:0 0 8px;font-size:32px}.subtitle{margin:0;color:#666;line-height:1.45}.btn-top{border-radius:999px;padding:13px 20px;text-decoration:none;color:#fff;font-weight:800;background:linear-gradient(135deg,#2d2d2d,#111);box-shadow:0 12px 26px rgba(0,0,0,.18)}.hero{background:#fff;border:1px solid #e5e2dc;border-radius:22px;padding:22px;box-shadow:0 10px 30px rgba(0,0,0,.06);margin-bottom:18px}.search{width:100%;border:1px solid #ddd8cf;border-radius:16px;padding:15px 16px;font-size:15px;outline:none}.search:focus{border-color:#5d1bc4;box-shadow:0 0 0 3px rgba(93,27,196,.10)}.actions{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px}.download-all{border-radius:999px;padding:13px 20px;text-decoration:none;color:#fff;font-weight:800;background:linear-gradient(135deg,#5d1bc4,#32116e);box-shadow:0 12px 26px rgba(93,27,196,.22)}.meta{color:#777;font-size:13px}.list{display:grid;gap:12px}.item{display:grid;grid-template-columns:72px 1fr auto;gap:16px;align-items:center;background:#fff;border:1px solid #e5e2dc;border-radius:18px;padding:12px;box-shadow:0 8px 22px rgba(0,0,0,.045)}.thumb{width:72px;height:72px;border-radius:14px;object-fit:cover;background:#eee}.thumb-placeholder{width:72px;height:72px;border-radius:14px;background:#eee;display:flex;align-items:center;justify-content:center;color:#777;font-weight:800}.item-name{font-weight:800}.download{border-radius:999px;padding:11px 16px;text-decoration:none;background:#111;color:#fff;font-weight:800;white-space:nowrap}.empty{display:none;text-align:center;padding:24px;color:#777}@media(max-width:760px){.topbar{align-items:flex-start;flex-direction:column}h1{font-size:26px}.item{grid-template-columns:58px 1fr}.thumb,.thumb-placeholder{width:58px;height:58px}.download{grid-column:1/-1;text-align:center}}';
+      const publicScript = "const arquivos=__JSON_DATA__;const list=document.getElementById(\"list\"),search=document.getElementById(\"search\"),count=document.getElementById(\"count\"),empty=document.getElementById(\"empty\");function normalizar(texto){return (texto||\"\").toString().toLowerCase().normalize(\"NFD\").replace(/[\\u0300-\\u036f]/g,\"\").replace(/º/g,\"o\")}function escHtml(texto){return (texto||\"\").toString().replace(/[&<>\"']/g,function(c){if(c===\"&\")return\"&amp;\";if(c===\"<\")return\"&lt;\";if(c===\">\")return\"&gt;\";if(c===\"\\\"\")return\"&quot;\";return\"&#39;\"})}function renderizar(){const termo=normalizar(search.value.trim());const filtrados=arquivos.filter(function(item){return normalizar(item.nome).includes(termo)});list.innerHTML=filtrados.map(function(item){const img=item.imagem?'<img class=\"thumb\" src=\"'+escHtml(item.imagem)+'\" alt=\"'+escHtml(item.nome)+'\">':'<div class=\"thumb-placeholder\">3D</div>';return '<article class=\"item\">'+img+'<div><div class=\"item-name\">'+escHtml(item.nome)+'</div></div><a class=\"download\" href=\"'+escHtml(item.link)+'\" target=\"_blank\" rel=\"noopener noreferrer\">Baixar SketchUp</a></article>'}).join(\"\");count.textContent=filtrados.length+\" de \"+arquivos.length+\" arquivos\";empty.style.display=filtrados.length?\"none\":\"block\"}search.addEventListener(\"input\",renderizar);renderizar();".replace("__JSON_DATA__", jsonData);
+      return `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Biblioteca SketchUp | Keyato</title>
+<style>${css}</style>
+</head>
+<body>
+<main class="page">
+<header class="topbar"><div class="brand"><img src="${esc(logo)}" alt="Keyato Profissionais" /><div><h1>Biblioteca SketchUp</h1><p class="subtitle">Baixe os arquivos SketchUp dos puxadores disponíveis neste catálogo.<br>Faça a busca por código ou nome do produto.</p></div></div><a class="btn-top" href="index.html">Voltar ao catálogo</a></header>
+<section class="hero"><input class="search" id="search" type="search" placeholder="Buscar por código ou nome do produto..." /><div class="actions"><span class="meta" id="count"></span><a class="download-all" href="${esc(rarLink)}" target="_blank" rel="noopener noreferrer">Baixar todos os arquivos</a></div></section>
+<section class="list" id="list"></section><div class="empty" id="empty">Nenhum arquivo encontrado.</div>
+</main>
+<script>${publicScript}<\/script>
+</body>
+</html>`;
     }
 
     function baixarArquivo(nome, conteudo, tipo) {
       const blob = new Blob([conteudo], { type: tipo });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
-      a.href = url; a.download = nome; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+      a.href = url;
+      a.download = nome;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
     }
 
     document.getElementById("addProduct").addEventListener("click", adicionarProduto);
@@ -652,11 +671,19 @@
     document.getElementById("rarLink").addEventListener("input", salvar);
     document.getElementById("logoPath").addEventListener("input", salvar);
     document.getElementById("productRows").addEventListener("input", function(e) {
-      const input = e.target; const index = Number(input.dataset.index); const field = input.dataset.field;
-      if (!Number.isNaN(index) && field) { produtos[index][field] = input.value; salvar(); if (field === "imagem") render(); }
+      const input = e.target;
+      const index = Number(input.dataset.index);
+      const field = input.dataset.field;
+      if (!Number.isNaN(index) && field) {
+        produtos[index][field] = input.value;
+        salvar();
+        if (field === "imagem") render();
+      }
     });
     document.getElementById("productRows").addEventListener("click", function(e) {
-      const btn = e.target.closest("button"); if (!btn) return; const index = Number(btn.dataset.index);
+      const btn = e.target.closest("button");
+      if (!btn) return;
+      const index = Number(btn.dataset.index);
       if (btn.dataset.action === "delete") {
         const nomeProduto = produtos[index] && produtos[index].nome ? produtos[index].nome : "este produto";
         const confirmar = confirm("Tem certeza que deseja excluir " + nomeProduto + "?\n\nEssa ação remove o produto da lista do admin. Para aplicar no site, gere novamente o sketchup.html.");
@@ -664,23 +691,55 @@
       }
       if (btn.dataset.action === "duplicate") { produtos.splice(index + 1, 0, Object.assign({}, produtos[index])); salvar(); render(); }
     });
-    document.getElementById("exportJson").addEventListener("click", function() { salvar(); baixarArquivo("backup-sketchup-keyato.json", localStorage.getItem(STORAGE_KEY), "application/json;charset=utf-8"); });
+    document.getElementById("saveChanges").addEventListener("click", function() {
+      salvarRascunhoLocal();
+      baixarArquivo("produtos-keyato-sketchup.json", JSON.stringify(dadosAtuais(), null, 2), "application/json;charset=utf-8");
+      temAlteracoesPendentes = false;
+      atualizarStatus("Alterações exportadas em produtos-keyato-sketchup.json. Para publicar, gere e suba também o sketchup.html.", "saved");
+    });
+    document.getElementById("exportJson").addEventListener("click", function() {
+      salvarRascunhoLocal();
+      baixarArquivo("backup-sketchup-keyato.json", JSON.stringify(dadosAtuais(), null, 2), "application/json;charset=utf-8");
+      atualizarStatus("Backup JSON exportado com sucesso.", "saved");
+    });
     document.getElementById("importJson").addEventListener("change", function(e) {
-      const file = e.target.files[0]; if (!file) return; const reader = new FileReader();
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
       reader.onload = function() {
         try {
           const dados = JSON.parse(reader.result);
           if (!Array.isArray(dados.produtos)) throw new Error("Backup inválido");
           dados.produtos = dados.produtos.map(function(p) { return { nome: p.nome || "", link: p.link || "", imagem: p.imagem || "" }; });
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(dados)); carregar(); render();
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(dados));
+          carregar();
+          render();
+          temAlteracoesPendentes = false;
+          atualizarStatus("Backup JSON importado com sucesso.", "saved");
         } catch (err) { alert("Não foi possível importar o backup."); }
       };
       reader.readAsText(file);
     });
-    document.getElementById("clearDraft").addEventListener("click", function() { if (confirm("Isso limpará o rascunho local e restaurará os produtos iniciais. Continuar?")) { localStorage.removeItem(STORAGE_KEY); carregar(); render(); } });
-    document.getElementById("generateHtml").addEventListener("click", function() { salvar(); baixarArquivo("sketchup.html", gerarSketchupHtml(), "text/html;charset=utf-8"); });
+    document.getElementById("clearDraft").addEventListener("click", function() {
+      if (confirm("Isso limpará o rascunho local e restaurará os produtos iniciais. Continuar?")) {
+        localStorage.removeItem(STORAGE_KEY);
+        carregar();
+        render();
+        temAlteracoesPendentes = false;
+        atualizarStatus("Rascunho local limpo e produtos iniciais restaurados.", "saved");
+      }
+    });
+    document.getElementById("generateHtml").addEventListener("click", function() {
+      salvarRascunhoLocal();
+      baixarArquivo("sketchup.html", gerarSketchupHtml(), "text/html;charset=utf-8");
+      atualizarStatus("Arquivo sketchup.html gerado. Suba este arquivo no GitHub para publicar as alterações.", "saved");
+    });
+    window.addEventListener("beforeunload", function(e) {
+      if (temAlteracoesPendentes) { e.preventDefault(); e.returnValue = ""; }
+    });
 
-    carregar(); render();
+    carregar();
+    render();
   </script>
 </body>
 </html>
