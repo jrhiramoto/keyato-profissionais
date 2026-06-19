@@ -1,22 +1,152 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Biblioteca SketchUp | Keyato</title>
-<style>*{box-sizing:border-box}body{margin:0;background:#f5f5f3;color:#1f1f1f;font-family:Arial,sans-serif}.page{width:min(1180px,calc(100% - 32px));margin:0 auto;padding:34px 0 52px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:28px}.brand{display:flex;align-items:center;gap:16px}.brand img{width:88px;display:block;box-shadow:0 6px 18px rgba(0,0,0,.12)}h1{margin:0 0 8px;font-size:32px}.subtitle{margin:0;color:#666;line-height:1.45}.btn-top{border-radius:999px;padding:13px 20px;text-decoration:none;color:#fff;font-weight:800;background:linear-gradient(135deg,#2d2d2d,#111);box-shadow:0 12px 26px rgba(0,0,0,.18)}.hero{background:#fff;border:1px solid #e5e2dc;border-radius:22px;padding:22px;box-shadow:0 10px 30px rgba(0,0,0,.06);margin-bottom:18px}.search{width:100%;border:1px solid #ddd8cf;border-radius:16px;padding:15px 16px;font-size:15px;outline:none}.search:focus{border-color:#5d1bc4;box-shadow:0 0 0 3px rgba(93,27,196,.10)}.actions{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px}.download-all{border-radius:999px;padding:13px 20px;text-decoration:none;color:#fff;font-weight:800;background:linear-gradient(135deg,#5d1bc4,#32116e);box-shadow:0 12px 26px rgba(93,27,196,.22)}.meta{color:#777;font-size:13px}.list{display:grid;gap:12px}.item{display:grid;grid-template-columns:72px 1fr auto;gap:16px;align-items:center;background:#fff;border:1px solid #e5e2dc;border-radius:18px;padding:12px;box-shadow:0 8px 22px rgba(0,0,0,.045)}.thumb{width:72px;height:72px;border-radius:14px;object-fit:cover;background:#eee}.thumb-placeholder{width:72px;height:72px;border-radius:14px;background:#eee;display:flex;align-items:center;justify-content:center;color:#777;font-weight:800}.item-name{font-weight:800}.download{border-radius:999px;padding:11px 16px;text-decoration:none;background:#111;color:#fff;font-weight:800;white-space:nowrap}.empty{display:none;text-align:center;padding:24px;color:#777}@media(max-width:760px){.topbar{align-items:flex-start;flex-direction:column}h1{font-size:26px}.item{grid-template-columns:58px 1fr}.thumb,.thumb-placeholder{width:58px;height:58px}.download{grid-column:1/-1;text-align:center}}</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Biblioteca SketchUp | Keyato</title>
+  <style>
+    * { box-sizing: border-box; }
+    :root {
+      --bg: #f3f0ea;
+      --paper: rgba(255,255,255,.86);
+      --paper-solid: #ffffff;
+      --ink: #17130f;
+      --muted: #746c63;
+      --line: #e4ddd2;
+      --gold: #b9965a;
+      --gold-dark: #7c5b27;
+      --graphite: #181818;
+      --shadow: 0 18px 50px rgba(33, 26, 18, .10);
+      --soft-shadow: 0 10px 28px rgba(33, 26, 18, .07);
+    }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 15% 0%, rgba(185,150,90,.16), transparent 32%),
+        radial-gradient(circle at 90% 10%, rgba(93,27,196,.06), transparent 30%),
+        linear-gradient(135deg, #f9f7f2, var(--bg));
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image: linear-gradient(rgba(23,19,15,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(23,19,15,.025) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,.75), transparent 72%);
+    }
+    .page { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 32px 0 58px; position: relative; }
+    .topbar { display:flex; align-items:center; justify-content:space-between; gap:18px; margin-bottom:24px; }
+    .brand { display:flex; align-items:center; gap:16px; }
+    .brand img { width:98px; display:block; box-shadow: 0 10px 26px rgba(0,0,0,.14); }
+    .eyebrow { font-size:12px; letter-spacing:2.4px; text-transform:uppercase; color: var(--gold-dark); font-weight:800; margin-bottom:7px; }
+    h1 { margin:0; font-size: clamp(30px, 4vw, 48px); line-height:1; letter-spacing:-1.1px; font-weight: 800; }
+    .subtitle { margin:14px 0 0; color:var(--muted); line-height:1.55; font-size: 15px; max-width: 720px; }
+    .btn-top {
+      border-radius:999px; padding:13px 20px; text-decoration:none; color:#fff; font-weight:800;
+      background:linear-gradient(135deg,#2d2d2d,#111); box-shadow:0 14px 30px rgba(0,0,0,.20); white-space:nowrap;
+      transition: transform .22s ease, box-shadow .22s ease;
+    }
+    .btn-top:hover { transform: translateY(-2px); box-shadow:0 18px 38px rgba(0,0,0,.25); }
+    .hero {
+      position: relative; overflow: hidden;
+      background: var(--paper);
+      border: 1px solid rgba(185,150,90,.30);
+      border-radius: 28px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      margin-bottom: 22px;
+    }
+    .hero::after {
+      content:""; position:absolute; right:-90px; top:-100px; width:260px; height:260px; border-radius:50%;
+      background: radial-gradient(circle, rgba(185,150,90,.22), transparent 66%);
+      pointer-events:none;
+    }
+    .search-wrap { position: relative; z-index: 1; }
+    .search-label { display:block; font-size:12px; font-weight:800; color:var(--gold-dark); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:10px; }
+    .search {
+      width:100%; border:1px solid var(--line); border-radius:18px; padding:17px 18px; font-size:15px; outline:none;
+      background: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,.8);
+    }
+    .search:focus { border-color: var(--gold); box-shadow:0 0 0 4px rgba(185,150,90,.14); }
+    .hero-actions { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-top:16px; position: relative; z-index: 1; }
+    .download-all {
+      border-radius:999px; padding:14px 22px; text-decoration:none; color:#fff; font-weight:800;
+      background:linear-gradient(135deg,#b9965a,#7c5b27); box-shadow:0 14px 30px rgba(124,91,39,.25);
+      transition: transform .22s ease, box-shadow .22s ease;
+    }
+    .download-all:hover { transform: translateY(-2px); box-shadow:0 18px 38px rgba(124,91,39,.32); }
+    .meta { color:var(--muted); font-size:13px; font-weight:700; }
+    .list { display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:14px; }
+    .item {
+      display:grid; grid-template-columns:86px 1fr; gap:16px; align-items:center;
+      background: rgba(255,255,255,.92);
+      border:1px solid rgba(228,221,210,.92);
+      border-radius:22px; padding:14px; box-shadow:var(--soft-shadow);
+      transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease;
+    }
+    .item:hover { transform: translateY(-2px); border-color: rgba(185,150,90,.45); box-shadow:0 16px 38px rgba(33,26,18,.10); }
+    .thumb, .thumb-placeholder { width:86px; height:86px; border-radius:18px; background:#eee; }
+    .thumb { object-fit:cover; display:block; }
+    .thumb-placeholder { display:flex; align-items:center; justify-content:center; color:#7b7369; font-weight:900; background: linear-gradient(135deg,#eee8df,#faf8f3); border:1px solid #e4ddd2; }
+    .item-info { min-width:0; }
+    .item-name { font-weight:900; font-size:15px; line-height:1.3; margin-bottom:12px; letter-spacing:-.15px; }
+    .download {
+      display:inline-flex; align-items:center; justify-content:center; gap:8px;
+      border-radius:999px; padding:10px 15px; text-decoration:none;
+      background:#171717; color:#fff; font-weight:800; font-size:13px; white-space:nowrap;
+      box-shadow:0 10px 22px rgba(0,0,0,.16); transition: transform .22s ease, background .22s ease;
+    }
+    .download:hover { transform: translateY(-1px); background:#2a2a2a; }
+    .empty { display:none; text-align:center; padding:30px; color:var(--muted); background:rgba(255,255,255,.82); border:1px solid var(--line); border-radius:22px; }
+    @media(max-width:860px){ .list{grid-template-columns:1fr;} .topbar{align-items:flex-start; flex-direction:column;} .btn-top{align-self:flex-start;} }
+    @media(max-width:560px){
+      .page{width:min(100% - 22px,1180px); padding-top:22px;}
+      .brand{align-items:flex-start;}
+      .brand img{width:78px;}
+      .hero{padding:18px; border-radius:22px;}
+      .item{grid-template-columns:70px 1fr; gap:12px; border-radius:18px; padding:11px;}
+      .thumb,.thumb-placeholder{width:70px;height:70px;border-radius:15px;}
+      .download{width:100%; margin-top:2px;}
+    }
+  </style>
 </head>
 <body>
-<main class="page">
-<header class="topbar"><div class="brand"><img src="logo-site-catalogo.jpg" alt="Keyato Profissionais" /><div><h1>Biblioteca SketchUp</h1><p class="subtitle">Baixe os arquivos SketchUp dos puxadores disponíveis neste catálogo.<br>Faça a busca por código ou nome do produto.</p></div></div><a class="btn-top" href="index.html">Voltar ao catálogo</a></header>
-<section class="hero"><input class="search" id="search" type="search" placeholder="Buscar por código ou nome do produto..." /><div class="actions"><span class="meta" id="count"></span><a class="download-all" href="https://drive.google.com/file/d/1gvGPDKkhbPrU2mFyhGL7Nr05Ku4T8wkw/view?usp=drive_link" target="_blank" rel="noopener noreferrer">Baixar todos os arquivos</a></div></section>
-<section class="list" id="list"></section><div class="empty" id="empty">Nenhum arquivo encontrado.</div>
-</main>
-<script>const arquivos=[
+  <main class="page">
+    <header class="topbar">
+      <div class="brand">
+        <img src="logo-site-catalogo.jpg" alt="Keyato Profissionais" />
+        <div>
+          <div class="eyebrow">Biblioteca técnica</div>
+          <h1>Arquivos SketchUp</h1>
+          <p class="subtitle">Baixe os arquivos SketchUp dos puxadores disponíveis neste catálogo.<br>Faça a busca por código ou nome do produto.</p>
+        </div>
+      </div>
+      <a class="btn-top" href="index.html">Voltar ao catálogo</a>
+    </header>
+    <section class="hero">
+      <div class="search-wrap">
+        <label class="search-label" for="search">Buscar modelo</label>
+        <input class="search" id="search" type="search" placeholder="Digite código, nome ou linha do produto..." />
+      </div>
+      <div class="hero-actions">
+        <span class="meta" id="count"></span>
+        <a class="download-all" href="https://drive.google.com/file/d/1gvGPDKkhbPrU2mFyhGL7Nr05Ku4T8wkw/view?usp=drive_link" target="_blank" rel="noopener noreferrer">Baixar coleção completa</a>
+      </div>
+    </section>
+    <section class="list" id="list"></section>
+    <div class="empty" id="empty">Nenhum arquivo encontrado.</div>
+  </main>
+  <script>
+    const arquivos = [
   {
     "nome": "ZP4295 - PUXADOR ALLEN GRANADO 160",
     "link": "https://drive.google.com/file/d/13fnVdx3ZBzpdttibEii0O6Z93i8DzOg3/view?usp=drive_link",
-    "imagem": "sketchup_miniaturas/puxador-allen-granado-carrinho-160mm-cromo.jpg"
+    "imagem": ""
   },
   {
     "nome": "ZP4301 - PUXADOR ALLEN 160",
@@ -468,6 +598,24 @@
     "link": "https://drive.google.com/file/d/1Cd4m0IxLzsfxYUo7nve6xFuOo9hZXxHH/view?usp=drive_link",
     "imagem": ""
   }
-];const list=document.getElementById("list"),search=document.getElementById("search"),count=document.getElementById("count"),empty=document.getElementById("empty");function normalizar(texto){return (texto||"").toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/º/g,"o")}function escHtml(texto){return (texto||"").toString().replace(/[&<>"']/g,function(c){if(c==="&")return"&amp;";if(c==="<")return"&lt;";if(c===">")return"&gt;";if(c==="\"")return"&quot;";return"&#39;"})}function renderizar(){const termo=normalizar(search.value.trim());const filtrados=arquivos.filter(function(item){return normalizar(item.nome).includes(termo)});list.innerHTML=filtrados.map(function(item){const img=item.imagem?'<img class="thumb" src="'+escHtml(item.imagem)+'" alt="'+escHtml(item.nome)+'">':'<div class="thumb-placeholder">3D</div>';return '<article class="item">'+img+'<div><div class="item-name">'+escHtml(item.nome)+'</div></div><a class="download" href="'+escHtml(item.link)+'" target="_blank" rel="noopener noreferrer">Baixar SketchUp</a></article>'}).join("");count.textContent=filtrados.length+" de "+arquivos.length+" arquivos";empty.style.display=filtrados.length?"none":"block"}search.addEventListener("input",renderizar);renderizar();</script>
+];
+    const list = document.getElementById("list");
+    const search = document.getElementById("search");
+    const count = document.getElementById("count");
+    const empty = document.getElementById("empty");
+    function normalizar(texto) { return (texto || "").toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/º/g, "o"); }
+    function escHtml(texto) { return (texto || "").toString().replace(/[&<>'"]/g, function(c) { return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]; }); }
+    function renderizar() {
+      const termo = normalizar(search.value.trim());
+      const filtrados = arquivos.filter(function(item) { return normalizar(item.nome).includes(termo); });
+      list.innerHTML = filtrados.map(function(item) {
+        const img = item.imagem ? '<img class="thumb" src="' + escHtml(item.imagem) + '" alt="' + escHtml(item.nome) + '" onerror="this.outerHTML='<div class=&quot;thumb-placeholder&quot;>3D</div>'">' : '<div class="thumb-placeholder">3D</div>';
+        return '<article class="item">' + img + '<div class="item-info"><div class="item-name">' + escHtml(item.nome) + '</div><a class="download" href="' + escHtml(item.link) + '" target="_blank" rel="noopener noreferrer">Baixar SketchUp</a></div></article>';
+      }).join("");
+      count.textContent = filtrados.length + " de " + arquivos.length + " arquivos disponíveis";
+      empty.style.display = filtrados.length ? "none" : "block";
+    }
+    search.addEventListener("input", renderizar); renderizar();
+  </script>
 </body>
 </html>
