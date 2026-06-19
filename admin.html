@@ -64,7 +64,13 @@
     </header>
 
     <div class="notice">
-      <strong>Como usar:</strong> preencha ou edite os produtos, informe o caminho da miniatura no GitHub, por exemplo <strong>sketchup_miniaturas/zp4301-allen-160.jpg</strong>, e clique em <strong>Gerar sketchup.html</strong>. Esta página salva automaticamente um rascunho no seu navegador.
+      <strong>Como usar:</strong><br>
+      1. Preencha ou edite os produtos, links do Google Drive e caminhos das miniaturas no GitHub, por exemplo <strong>sketchup_miniaturas/zp4301-allen-160.jpg</strong>.<br>
+      2. Clique em <strong>Salvar alterações</strong> para baixar o arquivo de backup <strong>produtos-keyato-sketchup.json</strong>. Guarde esse arquivo, ele funciona como sua base de dados de segurança.<br>
+      3. Clique em <strong>Gerar sketchup.html</strong> para baixar a nova página pública da biblioteca.<br>
+      4. Substitua o arquivo <strong>sketchup.html</strong> antigo pelo novo no GitHub.<br>
+      5. Aguarde a Vercel atualizar automaticamente e depois abra a biblioteca usando <strong>Ctrl + F5</strong> para conferir.<br>
+      Esta página também salva automaticamente um rascunho no seu navegador enquanto você edita.
     </div>
 
     <section class="panel">
@@ -550,7 +556,7 @@
   }
 ];
     const SEED_RAR_LINK = "https://drive.google.com/file/d/1gvGPDKkhbPrU2mFyhGL7Nr05Ku4T8wkw/view?usp=drive_link";
-    const STORAGE_KEY = "keyato_sketchup_admin_v3";
+    const STORAGE_KEY = "keyato_sketchup_admin_v4";
     let produtos = [];
     let temAlteracoesPendentes = false;
 
