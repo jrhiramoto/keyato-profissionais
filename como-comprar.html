@@ -258,48 +258,90 @@
       max-height: 268px;
     }
 
-    .callout {
+    .note {
       position: absolute;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      color: #d8332a;
+      z-index: 3;
+      color: #e02020;
       font-family: 'Caveat', cursive;
       font-size: 26px;
       font-weight: 700;
-      line-height: .92;
+      line-height: .95;
       letter-spacing: .1px;
       white-space: nowrap;
-      text-shadow: 0 2px 8px rgba(255, 255, 255, .86);
-      filter: drop-shadow(0 7px 10px rgba(120, 40, 25, .12));
+      text-shadow: 0 2px 9px rgba(255, 255, 255, .92);
+      filter: drop-shadow(0 7px 10px rgba(150, 35, 28, .14));
       pointer-events: none;
     }
 
-    .callout svg {
-      width: 82px;
-      height: 48px;
-      flex: 0 0 auto;
-      overflow: visible;
+    .note em {
+      font-style: normal;
+      display: inline-block;
+      transform: rotate(-1.5deg);
     }
 
-    .callout path {
-      stroke: #d8332a;
-      stroke-width: 4;
+    .hand-arrow {
+      position: absolute;
+      overflow: visible;
+      width: 116px;
+      height: 64px;
+    }
+
+    .hand-arrow path,
+    .hand-arrow line {
+      stroke: #e02020;
+      stroke-width: 4.2;
       stroke-linecap: round;
       stroke-linejoin: round;
       fill: none;
     }
 
-    .callout em {
-      font-style: normal;
+    .note-step1 {
+      right: 26px;
+      bottom: 18px;
       transform: rotate(-2deg);
-      display: inline-block;
     }
 
-    .callout.one { right: 30px; bottom: 28px; }
-    .callout.two { right: 38px; bottom: 34px; }
-    .callout.three { right: 26px; top: 26px; }
-    .callout.three svg { transform: scaleX(-1) rotate(-5deg); }
+    .note-step1 .hand-arrow {
+      right: 118px;
+      bottom: 14px;
+      transform: rotate(-10deg);
+    }
+
+    .note-step2a {
+      right: 28px;
+      top: 42%;
+      transform: translateY(-50%) rotate(-1deg);
+    }
+
+    .note-step2a .hand-arrow {
+      right: 168px;
+      top: -16px;
+      transform: rotate(2deg);
+    }
+
+    .note-step2b {
+      right: 22px;
+      top: 66%;
+      transform: translateY(-50%) rotate(1deg);
+    }
+
+    .note-step2b .hand-arrow {
+      right: 185px;
+      top: -20px;
+      transform: rotate(-7deg);
+    }
+
+    .note-step3 {
+      right: 26px;
+      top: 22px;
+      transform: rotate(-2deg);
+    }
+
+    .note-step3 .hand-arrow {
+      right: 150px;
+      top: 18px;
+      transform: rotate(8deg);
+    }
 
     .finish {
       width: min(1240px, calc(100% - 34px));
@@ -439,7 +481,7 @@
       h1 { font-size: 48px; }
       .shot { padding: 14px; border-radius: 22px; min-height: auto; }
       .shot img { border-radius: 16px; max-height: 300px; }
-      .callout { display: none; }
+      .note { display: none; }
       .mini-preview img { height: 170px; }
     }
   </style>
@@ -481,7 +523,7 @@
         </div>
         <div class="shot shot-original">
           <img src="compra-passo-1-recorte.jpg" alt="Recorte do botão Adicione à lista no produto Coin">
-          <span class="callout one"><svg viewBox="0 0 95 54" aria-hidden="true"><path d="M6 10 C32 5, 55 14, 70 32"/><path d="M68 32 L58 25"/><path d="M68 32 L62 43"/></svg><em>Clique em<br>Adicione à lista</em></span>
+          <span class="note note-step1"><svg class="hand-arrow" viewBox="0 0 116 64" aria-hidden="true"><path d="M108 12 C78 10, 48 22, 18 48"/><line x1="18" y1="48" x2="34" y2="35"/><line x1="18" y1="48" x2="38" y2="52"/></svg><em>Clique em<br>Adicione à lista</em></span>
         </div>
       </article>
 
@@ -493,7 +535,8 @@
         </div>
         <div class="shot">
           <img src="compra-passo-2.jpg" alt="Tela de configuração do produto">
-          <span class="callout two"><svg viewBox="0 0 95 54" aria-hidden="true"><path d="M6 10 C32 5, 55 14, 70 32"/><path d="M68 32 L58 25"/><path d="M68 32 L62 43"/></svg><em>Escolha acabamento,<br>quantidade e lista</em></span>
+          <span class="note note-step2a"><svg class="hand-arrow" viewBox="0 0 116 64" aria-hidden="true"><path d="M108 14 C78 8, 46 16, 18 40"/><line x1="18" y1="40" x2="34" y2="28"/><line x1="18" y1="40" x2="36" y2="47"/></svg><em>Escolha o tamanho e o<br>acabamento</em></span>
+          <span class="note note-step2b"><svg class="hand-arrow" viewBox="0 0 116 64" aria-hidden="true"><path d="M108 15 C78 11, 45 20, 18 45"/><line x1="18" y1="45" x2="34" y2="32"/><line x1="18" y1="45" x2="38" y2="50"/></svg><em>Insira a quantidade<br>desejada</em></span>
         </div>
       </article>
 
@@ -505,7 +548,7 @@
         </div>
         <div class="shot">
           <img src="compra-passo-3.jpg" alt="Sacola de compras com produtos adicionados">
-          <span class="callout three"><svg viewBox="0 0 95 54" aria-hidden="true"><path d="M6 10 C32 5, 55 14, 70 32"/><path d="M68 32 L58 25"/><path d="M68 32 L62 43"/></svg><em>Sacola com<br>seus produtos</em></span>
+          <span class="note note-step3"><svg class="hand-arrow" viewBox="0 0 116 64" aria-hidden="true"><path d="M108 18 C76 10, 42 18, 18 44"/><line x1="18" y1="44" x2="34" y2="32"/><line x1="18" y1="44" x2="38" y2="49"/></svg><em>Sacola com<br>seus produtos</em></span>
         </div>
       </article>
     </section>
