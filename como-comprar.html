@@ -6,7 +6,7 @@
   <title>Como montar seu orçamento | Keyato Profissionais</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
     :root {
@@ -263,19 +263,43 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 10px 13px;
-      border-radius: 999px;
-      background: rgba(93, 27, 196, .96);
-      color: #fff;
-      font-size: 12px;
-      font-weight: 800;
-      box-shadow: 0 12px 26px rgba(93, 27, 196, .26);
+      color: #d8332a;
+      font-family: 'Caveat', cursive;
+      font-size: 26px;
+      font-weight: 700;
+      line-height: .92;
+      letter-spacing: .1px;
       white-space: nowrap;
+      text-shadow: 0 2px 8px rgba(255, 255, 255, .86);
+      filter: drop-shadow(0 7px 10px rgba(120, 40, 25, .12));
+      pointer-events: none;
     }
 
-    .callout.one { right: 48px; bottom: 45px; }
-    .callout.two { right: 54px; bottom: 54px; }
-    .callout.three { right: 34px; top: 34px; }
+    .callout svg {
+      width: 82px;
+      height: 48px;
+      flex: 0 0 auto;
+      overflow: visible;
+    }
+
+    .callout path {
+      stroke: #d8332a;
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+    }
+
+    .callout em {
+      font-style: normal;
+      transform: rotate(-2deg);
+      display: inline-block;
+    }
+
+    .callout.one { right: 30px; bottom: 28px; }
+    .callout.two { right: 38px; bottom: 34px; }
+    .callout.three { right: 26px; top: 26px; }
+    .callout.three svg { transform: scaleX(-1) rotate(-5deg); }
 
     .finish {
       width: min(1240px, calc(100% - 34px));
@@ -457,7 +481,7 @@
         </div>
         <div class="shot shot-original">
           <img src="compra-passo-1-recorte.jpg" alt="Recorte do botão Adicione à lista no produto Coin">
-          <span class="callout one">Clique em Adicione à lista</span>
+          <span class="callout one"><svg viewBox="0 0 95 54" aria-hidden="true"><path d="M6 10 C32 5, 55 14, 70 32"/><path d="M68 32 L58 25"/><path d="M68 32 L62 43"/></svg><em>Clique em<br>Adicione à lista</em></span>
         </div>
       </article>
 
@@ -469,7 +493,7 @@
         </div>
         <div class="shot">
           <img src="compra-passo-2.jpg" alt="Tela de configuração do produto">
-          <span class="callout two">Acabamento, quantidade e lista</span>
+          <span class="callout two"><svg viewBox="0 0 95 54" aria-hidden="true"><path d="M6 10 C32 5, 55 14, 70 32"/><path d="M68 32 L58 25"/><path d="M68 32 L62 43"/></svg><em>Escolha acabamento,<br>quantidade e lista</em></span>
         </div>
       </article>
 
@@ -481,7 +505,7 @@
         </div>
         <div class="shot">
           <img src="compra-passo-3.jpg" alt="Sacola de compras com produtos adicionados">
-          <span class="callout three">Sacola com seus produtos</span>
+          <span class="callout three"><svg viewBox="0 0 95 54" aria-hidden="true"><path d="M6 10 C32 5, 55 14, 70 32"/><path d="M68 32 L58 25"/><path d="M68 32 L62 43"/></svg><em>Sacola com<br>seus produtos</em></span>
         </div>
       </article>
     </section>
