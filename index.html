@@ -92,6 +92,57 @@
     }
 
 
+    /* BOTÃO COMO COMPRAR */
+    .howto-btn {
+      position: fixed;
+      left: 20px;
+      bottom: 150px;
+      z-index: 999;
+
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      padding: 14px 22px;
+      border-radius: 999px;
+
+      background: linear-gradient(135deg, #ffffff, #f7f3ee);
+      border: 1px solid rgba(93, 27, 196, 0.35);
+      color: #2d164d;
+
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+
+      box-shadow:
+        0 12px 26px rgba(93, 27, 196, 0.16),
+        inset 0 1px 0 rgba(255,255,255,0.75);
+      transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+    }
+
+    .howto-btn:hover {
+      transform: translateY(-2px) scale(1.03);
+      box-shadow:
+        0 16px 34px rgba(93, 27, 196, 0.22),
+        inset 0 1px 0 rgba(255,255,255,0.85);
+      background: linear-gradient(135deg, #ffffff, #efe7ff);
+    }
+
+    .howto-btn .howto-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: rgba(93, 27, 196, 0.12);
+      color: #5d1bc4;
+      font-size: 13px;
+      line-height: 1;
+    }
+
+
     /* BOTÃO SKETCHUP */
     .sketchup-btn {
       position: fixed;
@@ -156,6 +207,13 @@
         font-size: 13px;
       }
 
+      .howto-btn {
+        left: 14px;
+        bottom: 134px;
+        padding: 12px 16px;
+        font-size: 13px;
+      }
+
       .sketchup-btn {
         left: 14px;
         bottom: 82px;
@@ -180,11 +238,17 @@
   </div>
 
 
+  <!-- BOTÃO COMO COMPRAR -->
+  <a class="howto-btn" href="como-comprar.html" target="_blank" rel="noopener noreferrer">
+    <span class="howto-icon">?</span>
+    Como comprar
+  </a>
+
   <!-- BOTÃO SKETCHUP -->
   <a class="sketchup-btn" href="sketchup.html" target="_blank" rel="noopener noreferrer">
     <span class="sketchup-icon">3D</span>
     Biblioteca SketchUp
-</a>
+  </a>
 
   <!-- BOTÃO -->
   <a class="whatsapp" href="https://wa.me/5511950802776" target="_blank">
