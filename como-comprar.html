@@ -258,6 +258,8 @@
       max-height: 268px;
     }
 
+    .step2-shot img { max-height: 360px; }
+
     .note {
       position: absolute;
       z-index: 3;
@@ -282,65 +284,66 @@
     .hand-arrow {
       position: absolute;
       overflow: visible;
-      width: 116px;
-      height: 64px;
+      width: 150px;
+      height: 72px;
     }
 
     .hand-arrow path,
     .hand-arrow line {
       stroke: #e02020;
-      stroke-width: 4.2;
+      stroke-width: 3.8;
       stroke-linecap: round;
       stroke-linejoin: round;
       fill: none;
     }
 
+    /* Setas manuscritas: a ponta da seta fica sempre no alvo */
     .note-step1 {
-      right: 26px;
-      bottom: 18px;
+      right: 34px;
+      bottom: 30px;
       transform: rotate(-2deg);
     }
 
     .note-step1 .hand-arrow {
-      right: 118px;
-      bottom: 14px;
-      transform: rotate(-10deg);
+      right: 116px;
+      bottom: -2px;
+      transform: rotate(-5deg);
     }
 
     .note-step2a {
-      right: 28px;
-      top: 42%;
-      transform: translateY(-50%) rotate(-1deg);
+      left: 66%;
+      top: 46%;
+      transform: rotate(-2deg);
     }
 
     .note-step2a .hand-arrow {
-      right: 168px;
-      top: -16px;
-      transform: rotate(2deg);
+      left: -185px;
+      top: 12px;
+      transform: rotate(4deg);
     }
 
     .note-step2b {
-      right: 22px;
-      top: 66%;
-      transform: translateY(-50%) rotate(1deg);
+      left: 69%;
+      top: 63%;
+      transform: rotate(1deg);
     }
 
     .note-step2b .hand-arrow {
-      right: 185px;
-      top: -20px;
-      transform: rotate(-7deg);
+      left: -205px;
+      top: -6px;
+      transform: rotate(6deg);
     }
 
     .note-step3 {
-      right: 26px;
-      top: 22px;
+      right: 34px;
+      top: 26px;
       transform: rotate(-2deg);
     }
 
     .note-step3 .hand-arrow {
-      right: 150px;
-      top: 18px;
-      transform: rotate(8deg);
+      right: 155px;
+      top: 24px;
+      transform: rotate(2deg);
     }
 
     .finish {
@@ -523,7 +526,7 @@
         </div>
         <div class="shot shot-original">
           <img src="compra-passo-1-recorte.jpg" alt="Recorte do botão Adicione à lista no produto Coin">
-          <span class="note note-step1"><svg class="hand-arrow" viewBox="0 0 116 64" aria-hidden="true"><path d="M108 12 C78 10, 48 22, 18 48"/><line x1="18" y1="48" x2="34" y2="35"/><line x1="18" y1="48" x2="38" y2="52"/></svg><em>Clique em<br>Adicione à lista</em></span>
+          <span class="note note-step1"><svg class="hand-arrow" viewBox="0 0 150 72" aria-hidden="true"><path d="M142 42 C104 18, 62 16, 20 38"/><line x1="20" y1="38" x2="37" y2="27"/><line x1="20" y1="38" x2="39" y2="48"/></svg><em>Clique em<br>Adicione à lista</em></span>
         </div>
       </article>
 
@@ -533,10 +536,10 @@
           <h2 class="step-title">Configure o produto</h2>
           <p class="step-copy">Escolha o acabamento em <strong>Escolha uma opção</strong>, informe a quantidade desejada e clique novamente em <strong>Adicione à lista</strong>.</p>
         </div>
-        <div class="shot">
+        <div class="shot step2-shot">
           <img src="compra-passo-2.jpg" alt="Tela de configuração do produto">
-          <span class="note note-step2a"><svg class="hand-arrow" viewBox="0 0 116 64" aria-hidden="true"><path d="M108 14 C78 8, 46 16, 18 40"/><line x1="18" y1="40" x2="34" y2="28"/><line x1="18" y1="40" x2="36" y2="47"/></svg><em>Escolha o tamanho e o<br>acabamento</em></span>
-          <span class="note note-step2b"><svg class="hand-arrow" viewBox="0 0 116 64" aria-hidden="true"><path d="M108 15 C78 11, 45 20, 18 45"/><line x1="18" y1="45" x2="34" y2="32"/><line x1="18" y1="45" x2="38" y2="50"/></svg><em>Insira a quantidade<br>desejada</em></span>
+          <span class="note note-step2a"><svg class="hand-arrow" viewBox="0 0 150 72" aria-hidden="true"><path d="M142 42 C104 18, 62 16, 20 38"/><line x1="20" y1="38" x2="37" y2="27"/><line x1="20" y1="38" x2="39" y2="48"/></svg><em>Escolha o tamanho e o<br>acabamento</em></span>
+          <span class="note note-step2b"><svg class="hand-arrow" viewBox="0 0 150 72" aria-hidden="true"><path d="M142 42 C104 18, 62 16, 20 38"/><line x1="20" y1="38" x2="37" y2="27"/><line x1="20" y1="38" x2="39" y2="48"/></svg><em>Insira a quantidade<br>desejada</em></span>
         </div>
       </article>
 
@@ -548,7 +551,7 @@
         </div>
         <div class="shot">
           <img src="compra-passo-3.jpg" alt="Sacola de compras com produtos adicionados">
-          <span class="note note-step3"><svg class="hand-arrow" viewBox="0 0 116 64" aria-hidden="true"><path d="M108 18 C76 10, 42 18, 18 44"/><line x1="18" y1="44" x2="34" y2="32"/><line x1="18" y1="44" x2="38" y2="49"/></svg><em>Sacola com<br>seus produtos</em></span>
+          <span class="note note-step3"><svg class="hand-arrow" viewBox="0 0 150 72" aria-hidden="true"><path d="M142 42 C104 18, 62 16, 20 38"/><line x1="20" y1="38" x2="37" y2="27"/><line x1="20" y1="38" x2="39" y2="48"/></svg><em>Sacola com<br>seus produtos</em></span>
         </div>
       </article>
     </section>
