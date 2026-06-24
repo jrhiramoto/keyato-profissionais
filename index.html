@@ -256,9 +256,9 @@
       .whatsapp {
         right: 14px;
         left: auto;
-        bottom: calc(24px + env(safe-area-inset-bottom));
+        bottom: calc(72px + env(safe-area-inset-bottom));
 
-        padding: 12px 17px;
+        padding: 12px 16px;
         gap: 8px;
 
         font-size: 0;
@@ -266,14 +266,12 @@
       }
 
       .whatsapp::after {
-        content: "Fale Agora com\A Nossa Equipe de Vendas";
+        content: "Fale Agora com Nossa Equipe de Vendas";
         font-size: 13px;
         font-weight: 700;
         letter-spacing: 0.1px;
         color: #fff;
-        white-space: pre;
-        line-height: 1.15;
-        text-align: center;
+        white-space: nowrap;
       }
 
       .whatsapp:hover {
