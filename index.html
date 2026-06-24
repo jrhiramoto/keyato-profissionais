@@ -280,6 +280,65 @@
     }
 
 
+    /* MOBILE EM MODO PAISAGEM */
+    @media screen and (max-width: 1024px) and (orientation: landscape) {
+      .logo-keyato {
+        top: max(12px, env(safe-area-inset-top));
+        left: max(18px, env(safe-area-inset-left));
+        width: 82px;
+      }
+
+      .howto-btn {
+        top: calc(max(12px, env(safe-area-inset-top)) + 96px);
+        left: max(18px, env(safe-area-inset-left));
+        bottom: auto;
+
+        padding: 8px 14px;
+        gap: 7px;
+
+        font-size: 12px;
+        font-weight: 700;
+
+        max-width: 190px;
+        white-space: nowrap;
+      }
+
+      .howto-btn .howto-icon {
+        width: 19px;
+        height: 19px;
+        font-size: 11px;
+      }
+
+      .sketchup-btn {
+        display: none !important;
+      }
+
+      .whatsapp {
+        top: calc(max(12px, env(safe-area-inset-top)) + 142px);
+        left: max(18px, env(safe-area-inset-left));
+        right: auto;
+        bottom: auto;
+
+        padding: 9px 15px;
+        gap: 8px;
+
+        font-size: 0;
+        z-index: 1000;
+        white-space: nowrap;
+        max-width: 360px;
+      }
+
+      .whatsapp::after {
+        content: "Fale Agora com Nossa Equipe de Vendas";
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.1px;
+        color: #fff;
+        white-space: nowrap;
+      }
+    }
+
+
   </style>
 </head>
 
