@@ -197,28 +197,47 @@
       .logo-keyato {
         top: 14px;
         left: 14px;
-        width: 90px;
+        width: 92px;
       }
 
+      /* Como comprar menor e posicionado abaixo da logo */
+      .howto-btn {
+        top: 118px;
+        left: 14px;
+        bottom: auto;
+
+        padding: 10px 16px;
+        gap: 8px;
+
+        font-size: 13px;
+        font-weight: 700;
+
+        width: fit-content;
+        max-width: 170px;
+        z-index: 999;
+      }
+
+      .howto-btn .howto-icon {
+        width: 20px;
+        height: 20px;
+        font-size: 12px;
+      }
+
+      /* Biblioteca SketchUp escondida apenas no mobile */
+      .sketchup-btn {
+        display: none !important;
+      }
+
+      /* WhatsApp na posição inferior direita */
       .whatsapp {
         right: 14px;
-        bottom: 82px;
-        padding: 12px 16px;
-        font-size: 13px;
-      }
+        left: auto;
+        bottom: 24px;
 
-      .howto-btn {
-        left: 14px;
-        bottom: 134px;
-        padding: 12px 16px;
+        padding: 12px 18px;
         font-size: 13px;
-      }
 
-      .sketchup-btn {
-        left: 14px;
-        bottom: 82px;
-        padding: 12px 16px;
-        font-size: 13px;
+        z-index: 999;
       }
     }
 
