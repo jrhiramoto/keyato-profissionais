@@ -575,6 +575,58 @@
       }
     }
 
+
+    .mobile-tip {
+      width: min(1240px, calc(100% - 34px));
+      margin: 0 auto 56px;
+      padding: 6px 0 20px;
+    }
+
+    .mobile-tip-card {
+      background: rgba(255,255,255,.88);
+      border: 1px solid rgba(222,214,203,.9);
+      border-radius: 32px;
+      padding: 28px;
+      box-shadow: var(--soft-shadow);
+      overflow: hidden;
+    }
+
+    .mobile-tip-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 22px;
+    }
+
+    .mobile-tip-title {
+      font-size: clamp(38px, 4.5vw, 68px);
+      line-height: .95;
+      margin: 0;
+    }
+
+    .mobile-tip-text {
+      max-width: 450px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .mobile-tip-image {
+      border-radius: 24px;
+      overflow: hidden;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+
+    .mobile-tip-image img {
+      width: 100%;
+      display: block;
+      object-fit: contain;
+      background: #fff;
+    }
+
     @media (max-width: 920px) {
       .hero { grid-template-columns: 1fr; min-height: auto; padding-top: 24px; gap: 22px; }
       .hero-visual { height: auto; min-height: 0; padding: 10px; }
@@ -584,6 +636,7 @@
       .finish-grid { grid-template-columns: 1fr; }
       .or-badge { position: relative; left: auto; top: auto; margin: 16px auto; }
       .footer-cta { flex-direction: column; align-items: flex-start; }
+      .mobile-tip-header { flex-direction: column; align-items: flex-start; }
     }
 
     @media (max-width: 640px) {
@@ -592,12 +645,16 @@
       .nav-links { width: 100%; justify-content: flex-start; gap: 8px; }
       .nav-link { padding: 10px 13px; font-size: 11px; }
       .nav-link.dark { display: none; }
-      .hero, .section, .finish, .footer-cta { width: min(100% - 22px, 1240px); }
+      .hero, .section, .finish, .footer-cta, .mobile-tip { width: min(100% - 22px, 1240px); }
       h1 { font-size: 48px; }
       .shot { padding: 14px; border-radius: 22px; min-height: auto; }
       .shot img { border-radius: 16px; max-height: 300px; }
       .note { display: none; }
       .mini-preview img { height: 170px; }
+      .mobile-tip-card { padding: 16px; border-radius: 24px; }
+      .mobile-tip-title { font-size: 42px; }
+      .mobile-tip-text { font-size: 15px; }
+      .mobile-tip-image { border-radius: 18px; }
     }
   
     @media (max-width: 920px) and (orientation: landscape) {
@@ -694,6 +751,21 @@
 </div>
 </section>
 </main>
+
+<section class="mobile-tip">
+<div class="mobile-tip-card reveal">
+<div class="mobile-tip-header">
+<div>
+<h2 class="mobile-tip-title">Dica para usar no celular</h2>
+</div>
+<p class="mobile-tip-text">Para visualizar o catálogo com mais detalhes, toque no ícone de tela cheia e vire o celular na horizontal. Assim a experiência fica mais confortável e completa.</p>
+</div>
+<div class="mobile-tip-image">
+<img alt="Dica para usar o catálogo no celular em tela cheia e na horizontal" src="Usar-celular-horizontal.png"/>
+</div>
+</div>
+</section>
+
 <section class="footer-cta">
 <div>
 <h3>Dúvidas? Fale com nossa equipe.</h3>
