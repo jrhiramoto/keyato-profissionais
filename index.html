@@ -288,12 +288,16 @@
         width: 82px;
       }
 
-      .howto-btn {
-        top: calc(max(12px, env(safe-area-inset-top)) + 96px);
-        left: max(18px, env(safe-area-inset-left));
-        bottom: auto;
+      .sketchup-btn {
+        display: none !important;
+      }
 
-        padding: 8px 14px;
+      .howto-btn {
+        top: auto;
+        left: max(18px, env(safe-area-inset-left));
+        bottom: calc(176px + env(safe-area-inset-bottom));
+
+        padding: 9px 15px;
         gap: 7px;
 
         font-size: 12px;
@@ -301,6 +305,7 @@
 
         max-width: 190px;
         white-space: nowrap;
+        z-index: 1000;
       }
 
       .howto-btn .howto-icon {
@@ -309,32 +314,33 @@
         font-size: 11px;
       }
 
-      .sketchup-btn {
-        display: none !important;
-      }
-
       .whatsapp {
-        top: calc(max(12px, env(safe-area-inset-top)) + 142px);
+        top: auto;
         left: max(18px, env(safe-area-inset-left));
         right: auto;
-        bottom: auto;
+        bottom: calc(120px + env(safe-area-inset-bottom));
 
-        padding: 9px 15px;
+        padding: 10px 17px;
         gap: 8px;
 
         font-size: 0;
         z-index: 1000;
         white-space: nowrap;
-        max-width: 360px;
+        max-width: 170px;
       }
 
       .whatsapp::after {
-        content: "Fale Agora com Nossa Equipe de Vendas";
-        font-size: 12px;
+        content: "WhatsApp";
+        font-size: 13px;
         font-weight: 700;
         letter-spacing: 0.1px;
         color: #fff;
         white-space: nowrap;
+      }
+
+      .whatsapp:hover,
+      .howto-btn:hover {
+        transform: none;
       }
     }
 
