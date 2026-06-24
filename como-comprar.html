@@ -592,11 +592,8 @@
     }
 
     .mobile-tip-header {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 20px;
-      margin-bottom: 22px;
+      display:block;
+      margin-bottom:22px;
     }
 
     .mobile-tip-title {
@@ -606,7 +603,8 @@
     }
 
     .mobile-tip-text {
-      max-width: 450px;
+      max-width: 100%;
+      margin-top:14px;
       color: var(--muted);
       font-size: 16px;
       line-height: 1.6;
@@ -621,9 +619,11 @@
     }
 
     .mobile-tip-image img {
-      width: 100%;
-      display: block;
-      object-fit: contain;
+      width:auto;
+      max-width:none;
+      display:block;
+      margin:0 auto;
+      object-fit:contain;
       background: #fff;
     }
 
