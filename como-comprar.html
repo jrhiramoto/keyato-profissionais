@@ -599,7 +599,14 @@
       .note { display: none; }
       .mini-preview img { height: 170px; }
     }
-  </style>
+  
+    @media (max-width: 920px) and (orientation: landscape) {
+      .nav-link.dark{
+        display:none !important;
+      }
+    }
+
+</style>
 </head>
 <body>
 <div class="scroll-progress" id="scrollProgress"></div>
