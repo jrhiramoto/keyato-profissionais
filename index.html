@@ -334,46 +334,38 @@
         font-size: 11px;
       }
 
-      .whatsapp {
+       .whatsapp {
         top: auto;
         left: auto;
         right: max(18px, env(safe-area-inset-right));
         bottom: calc(42px + env(safe-area-inset-bottom));
-
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-
-        width: 138px;
-        height: 44px;
-        padding: 0 16px;
-        column-gap: 8px;
-
-        border-radius: 999px;
-        white-space: nowrap;
-        font-size: 13px;
-        font-weight: 700;
-        color:#fff;
-        line-height:1;
+        width:46px;
+        height:46px;
+        padding:0;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        border-radius:50%;
+        font-size:0;
+        line-height:0;
         z-index:1000;
       }
 
       .whatsapp svg{
-        width:18px;
-        height:18px;
-        min-width:18px;
-        min-height:18px;
+        width:22px;
+        height:22px;
         display:block;
-        margin:0;
         position:relative;
-        top:0;
-        left:0;
-        transform:none;
-        vertical-align:middle;
+        left:2px;
+        margin:0;
       }
 
       .whatsapp::after{
         content:none;
+      }
+
+      .whatsapp .wa-label{
+        display:none !important;
       }
 
       .whatsapp:hover,
@@ -381,17 +373,6 @@
         transform: none;
       }
     }
-
-      .whatsapp .wa-label{display:inline;}
-      @media screen and (max-width: 1024px) and (orientation: landscape){
-        .whatsapp .wa-label{
-          font-size:13px;
-        }
-        .whatsapp .wa-label::before{content:"WhatsApp";}
-        .whatsapp .wa-label{color:transparent;width:0;overflow:hidden;}
-        .whatsapp .wa-label::before{color:#fff;}
-      }
-
 </style>
 </head>
 
