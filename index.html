@@ -267,8 +267,11 @@
         padding: 0;
         gap: 0;
 
+        display: flex;
+        align-items: center;
         justify-content: center;
         font-size: 0;
+        line-height: 0;
         z-index: 1000;
       }
 
@@ -277,8 +280,12 @@
       }
 
       .whatsapp svg {
-        width: 22px;
-        height: 22px;
+        width: 24px;
+        height: 24px;
+        display: block;
+        margin: 0;
+        flex: 0 0 auto;
+        transform: translateX(0);
       }
 
       .whatsapp:hover {
