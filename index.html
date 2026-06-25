@@ -344,6 +344,14 @@
       }
     }
 
+    /* OCULTAR BOTÕES QUANDO O CARRINHO/MODAL ESTIVER ABERTO - SOMENTE MOBILE */
+    @media screen and (max-width: 1024px) {
+      body.mobile-actions-hidden .whatsapp,
+      body.mobile-actions-hidden .howto-btn {
+        display: none !important;
+      }
+    }
+
 
   </style>
 </head>
@@ -382,6 +390,70 @@
 
     Fale Agora com Nossa Equipe de Vendas
   </a>
+
+<script>
+(function () {
+  const iframe = document.querySelector(".catalogo iframe");
+  const mobileQuery = window.matchMedia("(max-width: 1024px)");
+  let hideTimer = null;
+
+  function hideMobileButtons() {
+    if (!mobileQuery.matches) return;
+
+    document.body.classList.add("mobile-actions-hidden");
+
+    clearTimeout(hideTimer);
+    hideTimer = setTimeout(function () {
+      document.body.classList.remove("mobile-actions-hidden");
+    }, 12000);
+  }
+
+  function showMobileButtons() {
+    if (!mobileQuery.matches) {
+      document.body.classList.remove("mobile-actions-hidden");
+    }
+  }
+
+  if (iframe) {
+    iframe.addEventListener("load", showMobileButtons);
+    iframe.addEventListener("pointerdown", hideMobileButtons);
+    iframe.addEventListener("touchstart", hideMobileButtons, { passive: true });
+    iframe.addEventListener("focus", hideMobileButtons);
+  }
+
+  window.addEventListener("message", function (event) {
+    if (!mobileQuery.matches) return;
+
+    const dataText = typeof event.data === "string"
+      ? event.data.toLowerCase()
+      : JSON.stringify(event.data || {}).toLowerCase();
+
+    if (
+      dataText.includes("cart") ||
+      dataText.includes("bag") ||
+      dataText.includes("modal") ||
+      dataText.includes("product") ||
+      dataText.includes("open")
+    ) {
+      hideMobileButtons();
+    }
+
+    if (
+      dataText.includes("close") ||
+      dataText.includes("closed")
+    ) {
+      document.body.classList.remove("mobile-actions-hidden");
+    }
+  });
+
+  mobileQuery.addEventListener("change", function () {
+    if (!mobileQuery.matches) {
+      document.body.classList.remove("mobile-actions-hidden");
+    }
+  });
+})();
+</script>
+
 
 </body>
 </html>
