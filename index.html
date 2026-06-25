@@ -344,10 +344,10 @@
       }
     }
 
-    /* OCULTAR BOTÕES QUANDO O CARRINHO/MODAL ESTIVER ABERTO - SOMENTE MOBILE */
+    /* OCULTAR BOTÕES SOBRE O CARRINHO/MODAL - SOMENTE MOBILE */
     @media screen and (max-width: 1024px) {
-      body.mobile-actions-hidden .whatsapp,
-      body.mobile-actions-hidden .howto-btn {
+      body.catalogo-interagindo .whatsapp,
+      body.catalogo-interagindo .howto-btn {
         display: none !important;
       }
     }
@@ -395,62 +395,40 @@
 (function () {
   const iframe = document.querySelector(".catalogo iframe");
   const mobileQuery = window.matchMedia("(max-width: 1024px)");
-  let hideTimer = null;
 
-  function hideMobileButtons() {
-    if (!mobileQuery.matches) return;
-
-    document.body.classList.add("mobile-actions-hidden");
-
-    clearTimeout(hideTimer);
-    hideTimer = setTimeout(function () {
-      document.body.classList.remove("mobile-actions-hidden");
-    }, 12000);
+  function isMobile() {
+    return mobileQuery.matches;
   }
 
-  function showMobileButtons() {
-    if (!mobileQuery.matches) {
-      document.body.classList.remove("mobile-actions-hidden");
+  function hideActions() {
+    if (!isMobile()) return;
+    document.body.classList.add("catalogo-interagindo");
+  }
+
+  function showActionsIfDesktop() {
+    if (!isMobile()) {
+      document.body.classList.remove("catalogo-interagindo");
     }
   }
 
   if (iframe) {
-    iframe.addEventListener("load", showMobileButtons);
-    iframe.addEventListener("pointerdown", hideMobileButtons);
-    iframe.addEventListener("touchstart", hideMobileButtons, { passive: true });
-    iframe.addEventListener("focus", hideMobileButtons);
+    iframe.addEventListener("focus", hideActions);
   }
 
-  window.addEventListener("message", function (event) {
-    if (!mobileQuery.matches) return;
-
-    const dataText = typeof event.data === "string"
-      ? event.data.toLowerCase()
-      : JSON.stringify(event.data || {}).toLowerCase();
-
-    if (
-      dataText.includes("cart") ||
-      dataText.includes("bag") ||
-      dataText.includes("modal") ||
-      dataText.includes("product") ||
-      dataText.includes("open")
-    ) {
-      hideMobileButtons();
-    }
-
-    if (
-      dataText.includes("close") ||
-      dataText.includes("closed")
-    ) {
-      document.body.classList.remove("mobile-actions-hidden");
+  window.addEventListener("blur", function () {
+    if (isMobile() && document.activeElement === iframe) {
+      hideActions();
     }
   });
 
-  mobileQuery.addEventListener("change", function () {
-    if (!mobileQuery.matches) {
-      document.body.classList.remove("mobile-actions-hidden");
+  setInterval(function () {
+    if (isMobile() && document.activeElement === iframe) {
+      hideActions();
     }
-  });
+  }, 250);
+
+  mobileQuery.addEventListener("change", showActionsIfDesktop);
+  showActionsIfDesktop();
 })();
 </script>
 
