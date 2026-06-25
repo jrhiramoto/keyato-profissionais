@@ -340,25 +340,35 @@
         right: max(18px, env(safe-area-inset-right));
         bottom: calc(42px + env(safe-area-inset-bottom));
 
-        width: auto;
-        height: auto;
-        padding: 10px 17px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        width: 132px;
+        height: 42px;
+        padding: 0 14px;
         gap: 8px;
 
-        font-size: 0;
-        justify-content: center;
-        z-index: 1000;
-        white-space: nowrap;
-        max-width: 170px;
+        border-radius:999px;
+        font-size:0;
+        line-height:1;
+        white-space:nowrap;
+        z-index:1000;
+      }
+
+      .whatsapp svg{
+        width:18px;
+        height:18px;
+        position:static;
+        transform:none;
+        flex:0 0 auto;
       }
 
       .whatsapp::after {
         content: "WhatsApp";
         font-size: 13px;
         font-weight: 700;
-        letter-spacing: 0.1px;
-        color: #fff;
-        white-space: nowrap;
+        color:#fff;
+        line-height:1;
       }
 
       .whatsapp:hover,
