@@ -518,10 +518,57 @@
     function marcarAlterado() { dirty = true; const s=document.getElementById('saveStatus'); s.textContent='Alterações pendentes'; s.classList.remove('saved'); }
     function marcarSalvo() { dirty = false; const s=document.getElementById('saveStatus'); s.textContent='Tudo salvo'; s.classList.add('saved'); }
     function salvarLocal() { localStorage.setItem(STORAGE_KEY, JSON.stringify({ rarLink:document.getElementById('rarLink').value.trim(), logoPath:document.getElementById('logoPath').value.trim(), produtos })); }
-    function carregar() {
-      const salvo=localStorage.getItem(STORAGE_KEY);
-      if(salvo){ try{ const d=JSON.parse(salvo); if(Array.isArray(d.produtos)&&d.produtos.length){ produtos=d.produtos.map(p=>({nome:p.nome||'',link:p.link||'',imagem:p.imagem||''})); document.getElementById('rarLink').value=d.rarLink||SEED_RAR_LINK; document.getElementById('logoPath').value=d.logoPath||'logo-site-catalogo.jpg'; marcarSalvo(); return; } }catch(e){} }
-      produtos=SEED_PRODUCTS.map(p=>Object.assign({},p)); document.getElementById('rarLink').value=SEED_RAR_LINK; document.getElementById('logoPath').value='logo-site-catalogo.jpg'; salvarLocal(); marcarSalvo();
+    async function carregar() {
+      // Recupera as miniaturas diretamente da biblioteca publicada.
+      // Isso corrige rascunhos locais antigos que ainda têm imagem vazia.
+      let publicados = [];
+      try {
+        const resposta = await fetch('./sketchup.html?atualizacao=' + Date.now(), { cache: 'no-store' });
+        if (resposta.ok) {
+          const html = await resposta.text();
+          const trecho = html.match(/const\s+arquivos\s*=\s*(\[[\s\S]*?\])\s*;/);
+          if (trecho) {
+            const dados = JSON.parse(trecho[1]);
+            if (Array.isArray(dados)) publicados = dados.map(p => ({
+              nome: p.nome || '', link: p.link || '', imagem: p.imagem || ''
+            }));
+          }
+        }
+      } catch (e) {
+        console.warn('Não foi possível recuperar os dados do sketchup.html publicado.', e);
+      }
+
+      const publicadoPorLink = new Map(publicados.filter(p => p.link).map(p => [p.link, p]));
+      const salvo = localStorage.getItem(STORAGE_KEY);
+      let dadosLocais = null;
+      if (salvo) {
+        try { dadosLocais = JSON.parse(salvo); } catch (e) {}
+      }
+
+      if (dadosLocais && Array.isArray(dadosLocais.produtos) && dadosLocais.produtos.length) {
+        const linksLocais = new Set();
+        produtos = dadosLocais.produtos.map(p => {
+          const publicado = publicadoPorLink.get(p.link) || {};
+          if (p.link) linksLocais.add(p.link);
+          return {
+            nome: p.nome || publicado.nome || '',
+            link: p.link || '',
+            imagem: p.imagem || publicado.imagem || ''
+          };
+        });
+        // Inclui itens publicados que ainda não existem no rascunho local.
+        publicados.forEach(p => {
+          if (p.link && !linksLocais.has(p.link)) produtos.push(p);
+        });
+        document.getElementById('rarLink').value = dadosLocais.rarLink || SEED_RAR_LINK;
+        document.getElementById('logoPath').value = dadosLocais.logoPath || 'logo-site-catalogo.jpg';
+      } else {
+        produtos = publicados.length ? publicados : SEED_PRODUCTS.map(p => Object.assign({}, p));
+        document.getElementById('rarLink').value = dadosLocais?.rarLink || SEED_RAR_LINK;
+        document.getElementById('logoPath').value = dadosLocais?.logoPath || 'logo-site-catalogo.jpg';
+      }
+      salvarLocal();
+      marcarSalvo();
     }
     function criarPreview(imagem,nome) { if(imagem){ const img=document.createElement('img'); img.className='thumb-preview'; img.src=imagem; img.alt=nome; img.onerror=()=>{ const ph=document.createElement('div'); ph.className='thumb-placeholder'; ph.textContent='3D'; img.replaceWith(ph); }; return img; } const ph=document.createElement('div'); ph.className='thumb-placeholder'; ph.textContent='3D'; return ph; }
     function criarInput(valor, field, index, placeholder='') { const input=document.createElement('input'); input.value=valor||''; input.dataset.field=field; input.dataset.index=index; if(placeholder) input.placeholder=placeholder; return input; }
@@ -567,11 +614,11 @@
     document.getElementById('productRows').addEventListener('click', e=>{ const btn=e.target.closest('button'); if(!btn)return; const index=Number(btn.dataset.index); if(btn.dataset.action==='delete'){ if(confirm('Tem certeza que deseja excluir este produto?')){ produtos.splice(index,1); salvarLocal(); marcarAlterado(); render(); } } if(btn.dataset.action==='duplicate'){ produtos.splice(index+1,0,Object.assign({},produtos[index])); salvarLocal(); marcarAlterado(); render(); } });
     document.getElementById('saveChanges').addEventListener('click',()=>{ salvarLocal(); baixarArquivo('produtos-keyato-sketchup.json', localStorage.getItem(STORAGE_KEY), 'application/json;charset=utf-8'); marcarSalvo(); });
     document.getElementById('exportJson').addEventListener('click',()=>{ salvarLocal(); baixarArquivo('backup-sketchup-keyato.json', localStorage.getItem(STORAGE_KEY), 'application/json;charset=utf-8'); });
-    document.getElementById('importJson').addEventListener('change',e=>{ const file=e.target.files[0]; if(!file)return; const reader=new FileReader(); reader.onload=()=>{ try{ const d=JSON.parse(reader.result); if(!Array.isArray(d.produtos)) throw new Error('Backup inválido'); localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); carregar(); render(); marcarAlterado(); }catch(err){ alert('Não foi possível importar o backup.'); } }; reader.readAsText(file); });
-    document.getElementById('clearDraft').addEventListener('click',()=>{ if(confirm('Isso limpará o rascunho local e restaurará os produtos iniciais. Continuar?')){ localStorage.removeItem(STORAGE_KEY); carregar(); render(); } });
+    document.getElementById('importJson').addEventListener('change',e=>{ const file=e.target.files[0]; if(!file)return; const reader=new FileReader(); reader.onload=()=>{ try{ const d=JSON.parse(reader.result); if(!Array.isArray(d.produtos)) throw new Error('Backup inválido'); localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); carregar().then(()=>{ render(); marcarAlterado(); }); }catch(err){ alert('Não foi possível importar o backup.'); } }; reader.readAsText(file); });
+    document.getElementById('clearDraft').addEventListener('click',()=>{ if(confirm('Isso limpará o rascunho local e restaurará os produtos iniciais. Continuar?')){ localStorage.removeItem(STORAGE_KEY); carregar().then(render); } });
     document.getElementById('generateHtml').addEventListener('click',()=>{ salvarLocal(); baixarArquivo('sketchup.html', gerarSketchupHtml(), 'text/html;charset=utf-8'); });
     window.addEventListener('beforeunload', e=>{ if(dirty){ e.preventDefault(); e.returnValue=''; } });
-    carregar(); render();
+    carregar().then(render);
   </script>
 </body>
 </html>
